@@ -337,6 +337,20 @@ body {
 .time-row input { width: 64px; }
 .time-row span { color: var(--text-muted); font-size: 12px; }
 
+/* Collapsible detail toggle (quick-add) */
+.detail-toggle {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--text-muted);
+  cursor: pointer; user-select: none;
+  padding: 8px 0; margin: 4px 0 2px;
+  border-top: 1px solid var(--border);
+}
+.detail-toggle:hover { color: var(--text); }
+.detail-toggle #t-detail-arrow { font-size: 10px; transition: transform .15s; display: inline-block; }
+.detail-hint { color: var(--text-dim); font-size: 11px; }
+.detail-section { animation: fadeIn .2s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
 /* ══════════════════════════════════════
    SPOON DISPLAY
 ══════════════════════════════════════ */
@@ -372,7 +386,7 @@ body {
 /* ══════════════════════════════════════
    TASKS
 ══════════════════════════════════════ */
-/* Two-panel layout: task list left, detail right on wide screens and a bit more */
+/* Two-panel layout: task list left, detail right on wide screens */
 .task-layout { display: grid; grid-template-columns: 1fr; gap: 0; }
 
 .task-section-hdr {
@@ -452,7 +466,7 @@ body {
 }
 .day-cell:hover { border-color: var(--border-hi); }
 .day-cell.done { background: var(--green); border-color: var(--green); color: var(--bg); font-size: 11px; }
-.day-cell.skip { background: var(--red-dim); border-color: var(--red); color: var(--red); font-size: 11px; }
+.day-cell.skip { background: var(--bg3); border-color: var(--border-hi); color: var(--text-dim); font-size: 11px; }
 
 .plan-today-input {
   width: 100%; font-size: 12px; background: var(--bg3);
@@ -725,6 +739,7 @@ body {
         <div class="mood-right">
           <div class="mood-tabs">
             <div class="mood-tab active" onclick="showMoodTab('calendar')">Calendar</div>
+            <div class="mood-tab" onclick="showMoodTab('patterns')">Patterns</div>
             <div class="mood-tab" onclick="showMoodTab('stats')">Stats</div>
             <div class="mood-tab" onclick="showMoodTab('activities')">Activities</div>
             <div class="mood-tab" onclick="showMoodTab('history')">History</div>
@@ -757,6 +772,14 @@ body {
               <div style="display:flex;gap:3px;margin-bottom:4px;" id="yip-month-labels"></div>
               <div class="yip-grid" id="yip-grid"></div>
               <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;" id="mood-legend"></div>
+            </div>
+          </div>
+
+          <!-- Patterns tab — the gentle mirror -->
+          <div class="mood-sub" id="mood-sub-patterns">
+            <div class="card" style="padding:16px;">
+              <div class="chart-lbl">What your days seem to show</div>
+              <div id="patterns-list"></div>
             </div>
           </div>
 
@@ -840,7 +863,7 @@ body {
 <div class="modal">
   <div class="modal-title" id="task-modal-title">New task</div>
   <div class="field"><label>Task name</label>
-    <input type="text" id="t-name" placeholder="What needs doing?"></div>
+    <input type="text" id="t-name" placeholder="What needs doing? (just a name is enough)"></div>
   <div class="field-row">
     <div class="field"><label>Section</label>
       <select id="t-section"></select></div>
@@ -850,27 +873,36 @@ body {
         <option value="active">Active</option>
       </select></div>
   </div>
-  <div class="field"><label>Estimated energy (spoons)</label>
-    <div class="spoon-picker" id="t-spoon-est"></div></div>
-  <div class="field">
-    <label>Steps — break it down</label>
-    <div class="step-editor">
-      <input type="text" id="t-step-input" placeholder="Add a step…" onkeydown="if(event.key==='Enter')addStep()">
-      <button class="btn btn-sm" onclick="addStep()">Add</button>
+
+  <!-- Detail toggle — everything below is optional -->
+  <div id="t-detail-toggle" class="detail-toggle" onclick="toggleTaskDetail()">
+    <span id="t-detail-arrow">▸</span> Add detail <span class="detail-hint">— optional, only if it helps</span>
+  </div>
+
+  <div id="t-detail" class="detail-section" style="display:none;">
+    <div class="field"><label>Estimated energy (spoons)</label>
+      <div class="spoon-picker" id="t-spoon-est"></div></div>
+    <div class="field">
+      <label>Steps — break it down</label>
+      <div class="step-editor">
+        <input type="text" id="t-step-input" placeholder="Add a step…" onkeydown="if(event.key==='Enter')addStep()">
+        <button class="btn btn-sm" onclick="addStep()">Add</button>
+      </div>
+      <div class="steps-edit-list" id="t-steps-list"></div>
     </div>
-    <div class="steps-edit-list" id="t-steps-list"></div>
+    <div class="field-row3">
+      <div class="field"><label>Cost</label><input type="text" id="t-cost" placeholder="e.g. €20, time"></div>
+      <div class="field"><label>Risk</label><input type="text" id="t-risk" placeholder="e.g. might fail"></div>
+      <div class="field"><label>Reward</label><input type="text" id="t-reward" placeholder="e.g. peace of mind"></div>
+    </div>
+    <div class="field"><label>Transition period done?</label>
+      <select id="t-transition">
+        <option value="">— not recorded —</option>
+        <option value="yes">Yes ✓</option>
+        <option value="no">No ✗</option>
+      </select></div>
   </div>
-  <div class="field-row3">
-    <div class="field"><label>Cost</label><input type="text" id="t-cost" placeholder="e.g. €20, time"></div>
-    <div class="field"><label>Risk</label><input type="text" id="t-risk" placeholder="e.g. might fail"></div>
-    <div class="field"><label>Reward</label><input type="text" id="t-reward" placeholder="e.g. peace of mind"></div>
-  </div>
-  <div class="field"><label>Transition period done?</label>
-    <select id="t-transition">
-      <option value="">— not recorded —</option>
-      <option value="yes">Yes ✓</option>
-      <option value="no">No ✗</option>
-    </select></div>
+
   <div class="modal-footer">
     <button class="btn" onclick="closeModal('task')">Cancel</button>
     <button class="btn btn-primary" onclick="saveTask()">Save task</button>
@@ -885,15 +917,23 @@ body {
   <input type="hidden" id="h-id">
   <div class="field"><label>Habit name</label>
     <input type="text" id="h-name" placeholder="What habit are you tracking?"></div>
-  <div class="field">
-    <label>Default energy estimate (spoons)</label>
-    <div class="spoon-picker" id="h-spoon-est"></div>
-    <div class="hint">Can be overridden per day when logging.</div></div>
-  <div class="field-row3">
-    <div class="field"><label>Cost</label><input type="text" id="h-cost" placeholder="e.g. daily time"></div>
-    <div class="field"><label>Risk</label><input type="text" id="h-risk" placeholder="e.g. burnout"></div>
-    <div class="field"><label>Reward</label><input type="text" id="h-reward" placeholder="e.g. better sleep"></div>
+
+  <div id="h-detail-toggle" class="detail-toggle" onclick="toggleHabitDetail()">
+    <span id="h-detail-arrow">▸</span> Add detail <span class="detail-hint">— optional</span>
   </div>
+
+  <div id="h-detail" class="detail-section" style="display:none;">
+    <div class="field">
+      <label>Default energy estimate (spoons)</label>
+      <div class="spoon-picker" id="h-spoon-est"></div>
+      <div class="hint">Can be overridden per day when logging.</div></div>
+    <div class="field-row3">
+      <div class="field"><label>Cost</label><input type="text" id="h-cost" placeholder="e.g. daily time"></div>
+      <div class="field"><label>Risk</label><input type="text" id="h-risk" placeholder="e.g. burnout"></div>
+      <div class="field"><label>Reward</label><input type="text" id="h-reward" placeholder="e.g. better sleep"></div>
+    </div>
+  </div>
+
   <div class="modal-footer">
     <button class="btn" onclick="closeModal('habit')">Cancel</button>
     <button class="btn btn-primary" onclick="saveHabit()">Save habit</button>
@@ -1181,8 +1221,19 @@ function openTaskModal(id) {
   if(task?.steps) _tmpSteps=task.steps.map(s=>({...s,subSteps:(s.subSteps||[]).map(ss=>({...ss}))}));
   buildSpoonPicker('t-spoon-est',task?.spoonEst||null);
   renderStepsEdit();
+  /* Quick-add: collapse detail for new tasks, auto-expand when editing a task that has detail */
+  const hasDetail = task && (task.spoonEst || task.cost || task.risk || task.reward || (task.steps&&task.steps.length) || task.transitionDone);
+  setTaskDetail(!!hasDetail);
   document.getElementById('task-modal').classList.add('open');
   setTimeout(()=>document.getElementById('t-name').focus(),100);
+}
+function setTaskDetail(open){
+  document.getElementById('t-detail').style.display = open ? '' : 'none';
+  document.getElementById('t-detail-arrow').textContent = open ? '▾' : '▸';
+}
+function toggleTaskDetail(){
+  const open = document.getElementById('t-detail').style.display === 'none';
+  setTaskDetail(open);
 }
 function saveTask() {
   const name=document.getElementById('t-name').value.trim(); if(!name){document.getElementById('t-name').focus();return;}
@@ -1419,8 +1470,17 @@ function openHabitModal(id){
   document.getElementById('h-risk').value=habit?.risk||'';
   document.getElementById('h-reward').value=habit?.reward||'';
   buildSpoonPicker('h-spoon-est',habit?.spoonEst||null);
+  const hasDetail = habit && (habit.spoonEst || habit.cost || habit.risk || habit.reward);
+  setHabitDetail(!!hasDetail);
   document.getElementById('habit-modal').classList.add('open');
   setTimeout(()=>document.getElementById('h-name').focus(),100);
+}
+function setHabitDetail(open){
+  document.getElementById('h-detail').style.display = open ? '' : 'none';
+  document.getElementById('h-detail-arrow').textContent = open ? '▾' : '▸';
+}
+function toggleHabitDetail(){
+  setHabitDetail(document.getElementById('h-detail').style.display === 'none');
 }
 function saveHabit(){
   const name=document.getElementById('h-name').value.trim();if(!name){document.getElementById('h-name').focus();return;}
@@ -1493,9 +1553,9 @@ function renderHabits(){
   const thisWeek=logs.filter(l=>l.type==='habit'&&l.result==='done'&&days.includes(l.date)).length;
   const totalDone=logs.filter(l=>l.type==='habit'&&l.result==='done').length;
   document.getElementById('habit-stats').innerHTML=`
-    <div class="stat-card"><div class="stat-lbl">This week</div><div class="stat-val">${thisWeek}</div><div class="stat-sub">out of ${habits.length*DAYS_SHOWN} possible</div></div>
-    <div class="stat-card"><div class="stat-lbl">Total completions</div><div class="stat-val">${totalDone}</div><div class="stat-sub">all time</div></div>
-    <div class="stat-card"><div class="stat-lbl">Active habits</div><div class="stat-val">${habits.length}</div><div class="stat-sub">being tracked</div></div>`;
+    <div class="stat-card"><div class="stat-lbl">Done this week</div><div class="stat-val">${thisWeek}</div><div class="stat-sub">${thisWeek===1?'time':'times'} you showed up</div></div>
+    <div class="stat-card"><div class="stat-lbl">Done all time</div><div class="stat-val">${totalDone}</div><div class="stat-sub">every one counts</div></div>
+    <div class="stat-card"><div class="stat-lbl">Habits</div><div class="stat-val">${habits.length}</div><div class="stat-sub">being tracked</div></div>`;
   /* chart */
   const cd=getLast(CHART_DAYS),hl=logs.filter(l=>l.type==='habit');
   const avg=(arr,key)=>arr.length?arr.reduce((s,l)=>s+(l[key]||0),0)/arr.length:null;
@@ -1558,13 +1618,14 @@ let _editingMoodDate=null;
 /* ── sub-tab switching ── */
 function showMoodTab(name){
   document.querySelectorAll('.mood-tab').forEach((t,i)=>{
-    const names=['calendar','stats','activities','history'];
+    const names=['calendar','patterns','stats','activities','history'];
     t.classList.toggle('active', names[i]===name);
   });
   document.querySelectorAll('.mood-sub').forEach(s=>s.classList.remove('active'));
   const sub=document.getElementById('mood-sub-'+name);
   if(sub) sub.classList.add('active');
   if(name==='calendar'){ renderMoodCalendar(); renderYearInPixels(); }
+  if(name==='patterns') renderPatterns();
   if(name==='stats')    renderMoodStats();
   if(name==='activities') renderActivitiesManager();
   if(name==='history')  renderMoodHistory();
@@ -1724,6 +1785,125 @@ function renderYearInPixels(){
   if(document.getElementById('mood-legend')) document.getElementById('mood-legend').innerHTML=legend;
 }
 
+/* ── patterns: the gentle mirror ──
+   Surfaces only plain-language, non-judgmental observations,
+   and only when there's enough data to be worth noticing.
+   Never frames anything as a failure or a target. */
+function renderPatterns(){
+  const el=document.getElementById('patterns-list');
+  if(!el) return;
+  const moodData=load(STORE_MOOD);
+  const logs=load(STORE_LOG);
+  const moodScore={rad:5,good:4,meh:3,bad:2,awful:1};
+  const MIN_DAYS=3; // need at least this many days with an activity before saying anything
+
+  const observations=[];
+
+  // ── 1. Activity → mood (which activities tend to coincide with better days) ──
+  const acts=getActivities();
+  const moodByDate={}; moodData.forEach(m=>{ moodByDate[m.date]=m; });
+  const overallAvg = moodData.length ? moodData.reduce((s,m)=>s+(moodScore[m.mood]||3),0)/moodData.length : 3;
+
+  acts.forEach(a=>{
+    const withAct=moodData.filter(m=>(m.activities||[]).includes(a.id));
+    if(withAct.length<MIN_DAYS) return;
+    const avg=withAct.reduce((s,m)=>s+(moodScore[m.mood]||3),0)/withAct.length;
+    const diff=avg-overallAvg;
+    if(diff>=0.4){
+      observations.push({
+        emoji:a.emoji,
+        text:`On days you logged <strong>${a.name}</strong>, your mood tended to be a little brighter than usual.`,
+        sub:`${withAct.length} days · ${avg.toFixed(1)} vs ${overallAvg.toFixed(1)} average`,
+        tone:'good'
+      });
+    } else if(diff<=-0.4){
+      observations.push({
+        emoji:a.emoji,
+        text:`Days with <strong>${a.name}</strong> tended to feel a bit heavier. Not a verdict on the activity — just something you might keep an eye on.`,
+        sub:`${withAct.length} days · ${avg.toFixed(1)} vs ${overallAvg.toFixed(1)} average`,
+        tone:'note'
+      });
+    }
+  });
+
+  // ── 2. Energy: estimated vs actual (gentle self-knowledge, not judgment) ──
+  const energyLogs=logs.filter(l=>l.spoonEst!=null && l.spoonActual!=null);
+  if(energyLogs.length>=MIN_DAYS){
+    const avgEst=energyLogs.reduce((s,l)=>s+l.spoonEst,0)/energyLogs.length;
+    const avgAct=energyLogs.reduce((s,l)=>s+l.spoonActual,0)/energyLogs.length;
+    const gap=avgAct-avgEst;
+    if(gap>=0.6){
+      observations.push({
+        emoji:'🥄',
+        text:`Things have been costing you a bit more energy than you expected, on average. Worth being gentle with your estimates.`,
+        sub:`est ${avgEst.toFixed(1)} → actual ${avgAct.toFixed(1)} spoons`,
+        tone:'note'
+      });
+    } else if(gap<=-0.6){
+      observations.push({
+        emoji:'🥄',
+        text:`You've been estimating more energy than things actually took — you may have more room than your gut tells you.`,
+        sub:`est ${avgEst.toFixed(1)} → actual ${avgAct.toFixed(1)} spoons`,
+        tone:'good'
+      });
+    }
+  }
+
+  // ── 3. Mood ↔ energy: do brighter-mood days coincide with more energy spent? ──
+  // (purely descriptive, framed softly)
+  const dayEnergy={};
+  logs.filter(l=>l.spoonActual!=null).forEach(l=>{
+    if(!dayEnergy[l.date]) dayEnergy[l.date]=[];
+    dayEnergy[l.date].push(l.spoonActual);
+  });
+  const paired=Object.keys(dayEnergy).filter(d=>moodByDate[d]).map(d=>({
+    mood:moodScore[moodByDate[d].mood]||3,
+    energy:dayEnergy[d].reduce((a,b)=>a+b,0)/dayEnergy[d].length
+  }));
+  if(paired.length>=4){
+    const goodDays=paired.filter(p=>p.mood>=4);
+    const lowDays=paired.filter(p=>p.mood<=2);
+    if(goodDays.length>=2 && lowDays.length>=2){
+      const goodEnergy=goodDays.reduce((s,p)=>s+p.energy,0)/goodDays.length;
+      const lowEnergy=lowDays.reduce((s,p)=>s+p.energy,0)/lowDays.length;
+      if(Math.abs(goodEnergy-lowEnergy)>=0.5){
+        const more = goodEnergy>lowEnergy;
+        observations.push({
+          emoji:'🔋',
+          text:more
+            ? `Your brighter days have tended to be ones where you did a little more. Sometimes doing gently lifts the day — no pressure to force it.`
+            : `Your brighter days have tended to be lower-effort ones. Rest might be doing more for you than it gets credit for.`,
+          sub:`${paired.length} days compared`,
+          tone:'good'
+        });
+      }
+    }
+  }
+
+  // ── Render ──
+  if(!moodData.length){
+    el.innerHTML=`<div class="empty" style="padding:24px;"><p>Once you've logged a few days of moods and activities, gentle patterns will show up here.</p></div>`;
+    return;
+  }
+  if(!observations.length){
+    el.innerHTML=`<div style="font-size:13px;color:var(--text-muted);line-height:1.7;padding:6px 0;">
+      Nothing stands out strongly yet — and that's completely fine. Keep logging when you feel like it, and any patterns worth noticing will surface here on their own. No pressure to make them appear.
+    </div>`;
+    return;
+  }
+  el.innerHTML=observations.map(o=>`
+    <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);align-items:flex-start;">
+      <div style="font-size:22px;flex-shrink:0;">${o.emoji}</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;line-height:1.6;color:var(--text);">${o.text}</div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--text-dim);margin-top:4px;">${o.sub}</div>
+      </div>
+    </div>`).join('') +
+    `<div style="font-size:11px;color:var(--text-dim);font-style:italic;margin-top:12px;line-height:1.6;">
+      These are gentle observations from your own logs, not rules or goals. They shift as you add more days.
+    </div>`;
+}
+
 /* ── stats ── */
 function renderMoodStats(){
   const moodData=load(STORE_MOOD);
@@ -1731,22 +1911,16 @@ function renderMoodStats(){
     document.getElementById('mood-stat-cards').innerHTML='<div class="empty" style="grid-column:span 3;padding:30px;"><p>No entries yet.</p></div>';
     return;
   }
-  // streak
-  const t=today();
-  let streak=0;
-  for(let i=0;;i++){
-    const d=new Date(); d.setDate(d.getDate()-i);
-    const ds=d.toISOString().slice(0,10);
-    if(moodData.find(m=>m.date===ds)) streak++;
-    else break;
-  }
+  // entries logged in the last 7 days (a gentle "checking in" count, not a streak)
+  const last7=getLast(7);
+  const recentCount=moodData.filter(m=>last7.includes(m.date)).length;
   // average mood (rad=5,good=4,meh=3,bad=2,awful=1)
   const moodScore={rad:5,good:4,meh:3,bad:2,awful:1};
   const scores=moodData.map(m=>moodScore[m.mood]||3);
   const avg=(scores.reduce((a,b)=>a+b,0)/scores.length);
   const avgMood=MOODS.find(m=>moodScore[m.id]===Math.round(avg))||MOODS[2];
   document.getElementById('mood-stat-cards').innerHTML=`
-    <div class="mood-stat-card"><div class="mood-stat-lbl">Streak</div><div class="mood-stat-val">${streak}d</div><div class="mood-stat-sub">days in a row</div></div>
+    <div class="mood-stat-card"><div class="mood-stat-lbl">Checked in</div><div class="mood-stat-val">${recentCount}</div><div class="mood-stat-sub">${recentCount===1?'day':'days'} this week</div></div>
     <div class="mood-stat-card"><div class="mood-stat-lbl">Total entries</div><div class="mood-stat-val">${moodData.length}</div><div class="mood-stat-sub">all time</div></div>
     <div class="mood-stat-card"><div class="mood-stat-lbl">Avg mood</div><div class="mood-stat-val">${avgMood.emoji}</div><div class="mood-stat-sub">${avgMood.label}</div></div>`;
   // line chart — last 30 days
