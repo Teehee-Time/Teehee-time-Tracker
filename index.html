@@ -324,6 +324,70 @@ body {
 .spoon-btn:hover { border-color: var(--accent); color: var(--accent); }
 .spoon-btn.selected { background: var(--accent); border-color: var(--accent); color: #fff; }
 
+/* ── mastery / pleasure scale ── */
+.scale-note {
+  font-size: 11px; color: var(--text-muted); line-height: 1.6;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 8px 10px; margin: -6px 0 16px;
+}
+
+/* ── rough-moment button: always same spot, deliberately quiet ── */
+.btn-calm {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.btn-calm:hover { border-color: var(--border-hi); color: var(--text); filter: none; }
+
+/* ── compass view ── */
+.cmp-card { margin-bottom: 14px; max-width: 760px; }
+.cmp-card .card-pad { padding: 2px; }
+.cmp-title {
+  font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 10px;
+}
+.cmp-line { font-size: 13px; line-height: 1.7; color: var(--text); padding: 3px 0; }
+.cmp-line strong { color: var(--text); }
+.cmp-sub { font-size: 11px; color: var(--text-muted); line-height: 1.65; }
+.cmp-quote {
+  border-left: 2px solid var(--accent);
+  background: var(--bg2);
+  border-radius: var(--r);
+  padding: 12px 14px;
+  font-size: 13px; line-height: 1.7; font-style: italic; color: var(--text);
+  margin: 8px 0;
+}
+.cmp-ifthen {
+  font-family: var(--mono); font-size: 12px; color: var(--green);
+  background: var(--green-dim); border-radius: var(--r);
+  padding: 8px 12px; margin-top: 10px; line-height: 1.6;
+}
+.cmp-tally { font-family: var(--mono); font-size: 12px; color: var(--text-muted); margin-top: 10px; }
+.cmp-details summary {
+  cursor: pointer; font-size: 12px; color: var(--text-muted);
+  padding: 6px 0; list-style: none; user-select: none;
+}
+.cmp-details summary::before { content: '▸ '; }
+.cmp-details[open] summary::before { content: '▾ '; }
+.cmp-details summary:hover { color: var(--text); }
+
+/* ── calm overlay (despair protocol) ── */
+.calm-modal { max-width: 560px; }
+.calm-step { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.calm-step:last-of-type { border-bottom: none; }
+.calm-num {
+  flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--bg3); border: 1px solid var(--border-hi);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+}
+.calm-step-body { font-size: 13px; line-height: 1.65; color: var(--text); }
+.calm-step-body em { color: var(--text-muted); }
+
 .modal-footer {
   display: flex;
   gap: 8px;
@@ -624,6 +688,13 @@ body {
   </div>
 
   <div class="nav-group">
+    <div class="nav-section-label">Start here</div>
+    <div class="nav-tab" id="nav-compass" onclick="showView('compass')">
+      <span class="nt-icon">✦</span><span class="nt-label">Compass</span>
+    </div>
+  </div>
+
+  <div class="nav-group">
     <div class="nav-section-label">Tasks</div>
     <div class="nav-tab active" id="nav-active"  onclick="showView('active')">
       <span class="nt-icon">▶</span><span class="nt-label">Active</span>
@@ -669,7 +740,10 @@ body {
   <!-- Top bar: title + primary action, updated by showView() -->
   <div class="top-bar">
     <div class="top-bar-title" id="top-bar-title">Active tasks</div>
-    <div class="top-bar-action" id="top-bar-action"></div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="btn-calm" onclick="openCalm()" title="Open the despair protocol — for when the thoughts get loud">☁ Rough moment</button>
+      <div class="top-bar-action" id="top-bar-action"></div>
+    </div>
   </div>
 
   <!-- Scrollable content -->
@@ -834,6 +908,52 @@ body {
       </div>
     </div>
 
+    <!-- ══ COMPASS VIEW ══ -->
+    <div id="view-compass" class="view">
+
+      <div class="card cmp-card"><div class="card-pad">
+        <div class="cmp-title">☀ The morning read · 30 seconds</div>
+        <div class="cmp-line"><strong>1. My worth is not my output.</strong> Today's tasks are things I do, not things I am.</div>
+        <div class="cmp-line"><strong>2. The meter is offline.</strong> Accomplishment won't feel like anything for a while — burnout physics, not failure. Trust the log, not the mirror.</div>
+        <div class="cmp-line"><strong>3. Resistance gets to come along.</strong> Reluctance and action can happen at the same time. One battle, not two.</div>
+        <div class="cmp-line"><strong>4. The tally only goes up.</strong> Nothing I skip today erases anything I've ever done.</div>
+        <div class="cmp-line"><strong>5. One thing counts.</strong> The floor is the win. Everything above it is bonus.</div>
+      </div></div>
+
+      <div class="card cmp-card"><div class="card-pad">
+        <div class="cmp-title">◎ The one floor</div>
+        <div class="cmp-sub" style="margin-bottom:10px;">One absurdly small action, anchored to a transition — an event, never a clock time. Everything else today is available, not scheduled.</div>
+        <div class="field-row">
+          <div class="field"><label>The anchor (a transition)</label>
+            <input type="text" id="cmp-anchor" placeholder="e.g. after I close my work laptop" onchange="saveCompassFloor()"></div>
+          <div class="field"><label>The action (absurdly small)</label>
+            <input type="text" id="cmp-action" placeholder="e.g. open the sketchbook" onchange="saveCompassFloor()"></div>
+        </div>
+        <div class="cmp-ifthen" id="cmp-ifthen">If … , then I …</div>
+        <div class="cmp-tally" id="cmp-tally"></div>
+      </div></div>
+
+      <div class="card cmp-card"><div class="card-pad">
+        <div class="cmp-title">🗣 The honest toolkit — when resistance rises</div>
+        <div class="cmp-sub">Never say anything your lie detector would flag. Accuracy regulates; persuasion backfires.</div>
+        <div class="cmp-quote">"There's the resistance. Of course it's here — transitions cost you extra and today's tank is low. It's allowed to stay. We're doing ten minutes anyway, and it's allowed to feel bad the whole time."</div>
+        <details class="cmp-details"><summary>The three tools behind it</summary>
+          <div class="cmp-line"><strong>Name it, precisely.</strong> "There is dread in my chest and my face is clenching." Accurate words physically turn the alarm down. <em>"I notice dread showing up"</em> separates; <em>"everything is hopeless"</em> immerses.</div>
+          <div class="cmp-line"><strong>Use "you" or your own name.</strong> "You're allowed to find this hard." It borrows the kindness circuit that already works — the one you use on other people.</div>
+          <div class="cmp-line"><strong>Acknowledge + choose, promise nothing.</strong> The resistance gets a seat. It doesn't drive. Ten minutes, allowed to feel bad the whole time.</div>
+        </details>
+      </div></div>
+
+      <div class="card cmp-card"><div class="card-pad">
+        <div class="cmp-title">🛡 Time defense</div>
+        <div class="cmp-line"><strong>The universal reply:</strong> "I'll check and let you know." Every request, always. It converts pressure into a decision.</div>
+        <div class="cmp-line"><strong>The decision test:</strong> would I say yes if it were tomorrow? Is this want — or assumed obligation?</div>
+        <div class="cmp-line"><strong>Assumed rules are not real rules.</strong> Nobody is owed coffee, an instant reply, or your Saturday.</div>
+        <div class="cmp-sub" style="margin-top:8px;">Good things are not intrusions. People who fill the tank don't count as claims.</div>
+      </div></div>
+
+    </div>
+
   </div><!-- /content -->
 </div><!-- /main -->
 
@@ -989,6 +1109,12 @@ body {
   <div class="field"><label>Actual energy used (spoons)</label>
     <div class="spoon-picker" id="hlog-spoon-actual"></div></div>
   <hr class="field-div">
+  <div class="field"><label>Did it move me? · mastery <span style="color:var(--text-dim);">(optional — tap again to clear)</span></label>
+    <div class="spoon-picker" id="hlog-mastery"></div></div>
+  <div class="field"><label>Did I enjoy it? · pleasure <span style="color:var(--text-dim);">(optional)</span></label>
+    <div class="spoon-picker" id="hlog-pleasure"></div></div>
+  <div class="scale-note">Low numbers are expected during recovery — and they still count. Judge the rep by whether it moved you an inch out of shutdown, never by how it felt.</div>
+  <hr class="field-div">
   <div class="field"><label>Time spent</label>
     <div class="time-row">
       <input type="number" id="hlog-hours" min="0" max="99" placeholder="0"><span>hr</span>
@@ -1005,6 +1131,34 @@ body {
   <div class="modal-footer">
     <button class="btn" onclick="closeModal('hlog')">Cancel</button>
     <button class="btn btn-primary" onclick="saveHlog()">Save entry</button>
+  </div>
+</div>
+</div>
+
+<!-- CALM / ROUGH MOMENT OVERLAY -->
+<div class="modal-overlay" id="calm-modal">
+<div class="modal calm-modal">
+  <div class="modal-title">☁ Rough moment</div>
+  <div class="cmp-sub" style="margin-bottom:10px;">"It doesn't matter anyway" has a signature. It's a symptom, not a conclusion — a weather report, not a prophecy. Run this in order. No skipping to step 4.</div>
+
+  <div class="calm-step"><div class="calm-num">1</div><div class="calm-step-body"><strong>Name it.</strong> Say: "This is a flashback signature, not an assessment. I am feeling the past."</div></div>
+  <div class="calm-step"><div class="calm-num">2</div><div class="calm-step-body"><strong>Ground the body — 60 seconds.</strong> Feet flat. One hand on chest. Three long, slow exhales. Name 5 things you see, 3 you hear. Say out loud where you are and what year it is.</div></div>
+  <div class="calm-step"><div class="calm-num">3</div><div class="calm-step-body"><strong>Answer the critic — one line, no debate.</strong> "I don't have to earn the right to exist." It can sit in the room. It doesn't drive.</div></div>
+  <div class="calm-step"><div class="calm-num">4</div><div class="calm-step-body"><strong>Shrink and act — or rest on purpose.</strong> The doorknob version only: open the book, don't read it. Pick up the pencil, don't draw. Momentum catches or it doesn't — both are data. Genuinely empty? Lie down <em>deliberately</em>, with a decided end. Chosen rest is regulation.</div></div>
+  <div class="calm-step"><div class="calm-num">5</div><div class="calm-step-body"><strong>Don't check the feeling afterwards.</strong> Seed rule. Act, log it, walk away.</div></div>
+
+  <details class="cmp-details" style="margin-top:10px;"><summary>Flashback quick card — for sudden floods</summary>
+    <div class="cmp-line">· "I'm having an emotional flashback."</div>
+    <div class="cmp-line">· "I feel afraid, but I am not in danger. I am safe, now, here."</div>
+    <div class="cmp-line">· To the younger part: "I've got you. You're allowed to be here."</div>
+    <div class="cmp-line">· Slow exhale. Feel your feet. Unclench the jaw and face.</div>
+    <div class="cmp-line">· Let it pass. Every flashback so far has ended.</div>
+  </details>
+
+  <div class="cmp-sub" style="margin-top:12px;">Bigger than this card? A human beats a protocol — girlfriend, D&amp;D group, one message counts. If it's acutely dark: <strong>113.nl · 0800-0113</strong>, 24/7.</div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary" onclick="closeModal('calm')">Back</button>
   </div>
 </div>
 </div>
@@ -1050,6 +1204,7 @@ const SPOON_MAX      = 5;
 const DAYS_SHOWN     = 7;
 const CHART_DAYS     = 14;
 const STORE_ACT      = 'tr_activities';
+const STORE_COMPASS  = 'tr_compass';
 
 const MOODS = [
   { id:'rad',   emoji:'😄', label:'Rad',   color:'#3ecf8e', bg:'#0e3324' },
@@ -1121,6 +1276,30 @@ function buildSpoonPicker(id, sel) {
   }
 }
 const getSpoon = id => { const s=document.querySelector('#'+id+' .spoon-btn.selected'); return s?+s.textContent:null; };
+
+/* optional 1–5 scale: same look as spoons, but tapping the selected value clears it */
+function buildScalePicker(id, sel) {
+  const el=document.getElementById(id); if(!el)return; el.innerHTML='';
+  for(let i=1;i<=SPOON_MAX;i++){
+    const b=document.createElement('button');
+    b.className='spoon-btn'+(i===sel?' selected':'');
+    b.textContent=i; b.type='button';
+    b.onclick=()=>{
+      const was=b.classList.contains('selected');
+      el.querySelectorAll('.spoon-btn').forEach(x=>x.classList.remove('selected'));
+      if(!was) b.classList.add('selected');
+    };
+    el.appendChild(b);
+  }
+}
+const getScale = getSpoon;
+
+/* compass store is an object, not a list */
+function loadCompass(){
+  try { const c=JSON.parse(localStorage.getItem(STORE_COMPASS)||'{}'); return (c && !Array.isArray(c) && typeof c==='object') ? c : {}; }
+  catch(e){ return {}; }
+}
+const saveCompass = c => localStorage.setItem(STORE_COMPASS, JSON.stringify(c));
 const spoonsHtml = (n,type) => Array.from({length:SPOON_MAX},(_,i)=>
   `<div class="spoon ${i<n?(type==='actual'?'fa':'fe'):''}">
     ${i<n?'●':'○'}
@@ -1136,6 +1315,7 @@ const VIEW_CONFIG = {
   habits:  { title: 'Habits',         action: ()=>`<button class="btn btn-primary" onclick="openHabitModal()">＋ New habit</button>` },
   mood:    { title: 'Mood tracker',   action: ()=>'' },
   log:     { title: 'Activity log',   action: ()=>'' },
+  compass: { title: 'Compass',        action: ()=>'' },
 };
 
 function fabAction(){ /* desktop: no FAB */ }
@@ -1162,7 +1342,38 @@ function showView(name) {
   if(name==='habits')  renderHabits();
   if(name==='mood')    renderMood();
   if(name==='log')     renderLog();
+  if(name==='compass') renderCompass();
 }
+
+/* ═══════════════════════════════════════
+   COMPASS — the daily anchor
+═══════════════════════════════════════ */
+function renderCompass(){
+  const c=loadCompass();
+  const a=document.getElementById('cmp-anchor'), x=document.getElementById('cmp-action');
+  if(a) a.value=c.floorAnchor||'';
+  if(x) x.value=c.floorAction||'';
+  updateIfThen();
+  const logs=load(STORE_LOG);
+  const shows=logs.filter(l=>l.result==='done'||l.type==='task').length;
+  const el=document.getElementById('cmp-tally');
+  if(el) el.textContent = shows>0
+    ? `Lifetime tally: ${shows} times you showed up · every one counts · it never resets`
+    : `The tally starts at your first log — and from there it only goes up.`;
+}
+function updateIfThen(){
+  const a=document.getElementById('cmp-anchor')?.value.trim();
+  const x=document.getElementById('cmp-action')?.value.trim();
+  const el=document.getElementById('cmp-ifthen'); if(!el)return;
+  el.textContent=`If ${a||'…'}, then I ${x||'…'}.`;
+}
+function saveCompassFloor(){
+  const c=loadCompass();
+  c.floorAnchor=document.getElementById('cmp-anchor').value.trim();
+  c.floorAction=document.getElementById('cmp-action').value.trim();
+  saveCompass(c); updateIfThen();
+}
+function openCalm(){ document.getElementById('calm-modal').classList.add('open'); }
 
 /* ═══════════════════════════════════════
    MODALS
@@ -1522,6 +1733,8 @@ function openHlogModal(habitId,date){
   document.getElementById('hlog-btn-skip').classList.toggle('btn-primary',_hlogResult==='skip');
   buildSpoonPicker('hlog-spoon-est',existing?.spoonEst??habit.spoonEst??null);
   buildSpoonPicker('hlog-spoon-actual',existing?.spoonActual??null);
+  buildScalePicker('hlog-mastery',existing?.mastery??null);
+  buildScalePicker('hlog-pleasure',existing?.pleasure??null);
   document.getElementById('hlog-modal').classList.add('open');
 }
 function saveHlog(){
@@ -1537,6 +1750,8 @@ function saveHlog(){
     timeHours:parseInt(document.getElementById('hlog-hours').value)||0,
     timeMins:parseInt(document.getElementById('hlog-mins').value)||0,
     transitionDone:document.getElementById('hlog-transition').value,
+    mastery:getScale('hlog-mastery'),
+    pleasure:getScale('hlog-pleasure'),
     reflection:document.getElementById('hlog-reflection').value.trim()};
   const logs=load(STORE_LOG).filter(l=>!(l.type==='habit'&&l.habitId===habitId&&l.date===date));
   logs.unshift(entry); logs.sort((a,b)=>b.date.localeCompare(a.date));
@@ -1826,6 +2041,35 @@ function renderPatterns(){
     }
   });
 
+  // ── 1b. Mastery vs pleasure per habit (behavioral activation lens) ──
+  const mpByHabit={};
+  logs.filter(l=>l.type==='habit'&&(l.mastery!=null||l.pleasure!=null)).forEach(l=>{
+    (mpByHabit[l.habitId]=mpByHabit[l.habitId]||{name:l.name,m:[],p:[]});
+    if(l.mastery!=null)  mpByHabit[l.habitId].m.push(l.mastery);
+    if(l.pleasure!=null) mpByHabit[l.habitId].p.push(l.pleasure);
+  });
+  Object.values(mpByHabit).forEach(h=>{
+    if(h.m.length<MIN_DAYS && h.p.length<MIN_DAYS) return;
+    const avgM=h.m.length?h.m.reduce((a,b)=>a+b,0)/h.m.length:null;
+    const avgP=h.p.length?h.p.reduce((a,b)=>a+b,0)/h.p.length:null;
+    if(avgM!=null&&avgP!=null&&avgM-avgP>=1.2){
+      observations.push({emoji:'◎',
+        text:`<strong>${h.name}</strong> has been giving you a sense of getting somewhere even while enjoyment stays low. That's the expected recovery pattern — enjoyment is the last thing to come back. The reps are landing.`,
+        sub:`${h.m.length} rated entries · mastery ~${avgM.toFixed(1)} vs pleasure ~${avgP.toFixed(1)}`,
+        tone:'good'});
+    } else if(avgP!=null&&avgP>=4&&h.p.length>=MIN_DAYS){
+      observations.push({emoji:'◎',
+        text:`<strong>${h.name}</strong> has been genuinely enjoyable lately. Worth protecting.`,
+        sub:`${h.p.length} rated entries · pleasure ~${avgP.toFixed(1)}`,
+        tone:'good'});
+    } else if(avgM!=null&&avgP!=null&&avgM<=2&&avgP<=2&&h.m.length>=MIN_DAYS){
+      observations.push({emoji:'◎',
+        text:`<strong>${h.name}</strong> has felt flat on both counts lately. Not a verdict — but maybe the floor could shrink, or the anchor could move. Small experiments allowed.`,
+        sub:`${h.m.length} rated entries · mastery ~${avgM.toFixed(1)} · pleasure ~${avgP.toFixed(1)}`,
+        tone:'note'});
+    }
+  });
+
   // ── 2. Energy: estimated vs actual (gentle self-knowledge, not judgment) ──
   const energyLogs=logs.filter(l=>l.spoonEst!=null && l.spoonActual!=null);
   if(energyLogs.length>=MIN_DAYS){
@@ -2085,7 +2329,8 @@ function renderLog(){
     const timeStr=(l.timeHours||l.timeMins)?`⏱ ${l.timeHours||0}h ${l.timeMins||0}m`:'';
     const spoonStr=l.spoonActual?`⚡ ${l.spoonActual}/${SPOON_MAX}`:'';
     const tranStr=l.transitionDone==='yes'?'✓ trans':l.transitionDone==='no'?'✗ trans':'';
-    const meta=[timeStr,spoonStr,tranStr].filter(Boolean).join(' · ');
+    const mpStr=(l.mastery!=null||l.pleasure!=null)?['moved '+(l.mastery??'–'),'enjoyed '+(l.pleasure??'–')].join(' · '):'';
+    const meta=[timeStr,spoonStr,mpStr,tranStr].filter(Boolean).join(' · ');
     const pill=l.result?`<span class="log-pill ${l.result==='done'?'pill-done':'pill-skip'}">${l.result}</span>`:`<span class="log-pill pill-done">done</span>`;
     return `<div class="log-row">${pill}
       <span class="log-date">${fmtDate(l.date)}</span>
@@ -2106,7 +2351,7 @@ function renderLog(){
 /* ═══════════════════════════════════════
    DATA EXPORT / IMPORT — manual sync
 ═══════════════════════════════════════ */
-const SYNC_KEYS = [STORE_TASKS, STORE_HABITS, STORE_SECTIONS, STORE_LOG, STORE_MOOD, STORE_ACT];
+const SYNC_KEYS = [STORE_TASKS, STORE_HABITS, STORE_SECTIONS, STORE_LOG, STORE_MOOD, STORE_ACT, STORE_COMPASS];
 const SYNC_FILENAME = 'my-tracker-data.json';
 
 function flashSync(msg, isError){
@@ -2125,7 +2370,7 @@ function exportData(){
       _exportedAt: new Date().toISOString(),
       data: {}
     };
-    SYNC_KEYS.forEach(k => { payload.data[k] = JSON.parse(localStorage.getItem(k) || '[]'); });
+    SYNC_KEYS.forEach(k => { payload.data[k] = JSON.parse(localStorage.getItem(k) || (k===STORE_COMPASS ? '{}' : '[]')); });
 
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url  = URL.createObjectURL(blob);
@@ -2188,6 +2433,8 @@ function importData(event){
 ensureDefaultSection();
 ensureActivities();
 ['t-spoon-est','h-spoon-est','log-spoon-actual','hlog-spoon-est','hlog-spoon-actual'].forEach(id=>buildSpoonPicker(id,null));
+['hlog-mastery','hlog-pleasure'].forEach(id=>buildScalePicker(id,null));
+['cmp-anchor','cmp-action'].forEach(id=>document.getElementById(id)?.addEventListener('input',updateIfThen));
 showView('active');
 
 /* PWA removed — desktop version */
