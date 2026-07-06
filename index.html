@@ -388,6 +388,26 @@ body {
 .calm-step-body { font-size: 13px; line-height: 1.65; color: var(--text); }
 .calm-step-body em { color: var(--text-muted); }
 
+/* ── momentum chain ── */
+.chain-input-row { display: flex; gap: 8px; margin-top: 8px; }
+.chain-input-row input {
+  flex: 1; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r); color: var(--text); padding: 8px 12px;
+  font-family: var(--sans); font-size: 13px; transition: border-color .12s;
+}
+.chain-input-row input:focus { border-color: var(--accent); outline: none; }
+.chain-row {
+  display: flex; gap: 8px; align-items: baseline;
+  font-size: 13px; padding: 4px 0; color: var(--text);
+}
+.chain-check { color: var(--green); font-family: var(--mono); flex-shrink: 0; }
+.chain-time { font-family: var(--mono); font-size: 10px; color: var(--text-dim); margin-left: auto; flex-shrink: 0; }
+
+/* small wins in log view */
+.micro-row { display: flex; gap: 10px; align-items: baseline; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.micro-row:last-child { border-bottom: none; }
+.micro-date { font-family: var(--mono); font-size: 10px; color: var(--text-dim); flex-shrink: 0; width: 64px; }
+
 .modal-footer {
   display: flex;
   gap: 8px;
@@ -896,6 +916,10 @@ body {
 
     <!-- ══ LOG VIEW ══ -->
     <div id="view-log" class="view">
+      <div id="log-micro-wrap" style="display:none;">
+        <div class="log-section-title">Small wins</div>
+        <div class="card"><div id="log-micro"></div></div>
+      </div>
       <div class="log-cols">
         <div>
           <div class="log-section-title">Tasks</div>
@@ -930,7 +954,20 @@ body {
             <input type="text" id="cmp-action" placeholder="e.g. open the sketchbook" onchange="saveCompassFloor()"></div>
         </div>
         <div class="cmp-ifthen" id="cmp-ifthen">If … , then I …</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:10px;">
+          <button class="btn btn-primary" onclick="completeFloor()">✓ Floor done</button>
+          <span class="cmp-sub" id="cmp-floor-flash" style="min-height:16px;"></span>
+        </div>
         <div class="cmp-tally" id="cmp-tally"></div>
+
+        <hr class="field-div" style="margin:14px 0;">
+        <div class="cmp-title" style="margin-bottom:6px;">⚡ Momentum chain</div>
+        <div class="cmp-sub" style="margin-bottom:8px;">Did a thing? Log it — one line, no forms. Riding momentum? Keep chaining. Stop whenever; an ended chain is a finished chain, never a broken one.</div>
+        <div id="cmp-chain-list"></div>
+        <div class="chain-input-row">
+          <input type="text" id="cmp-next" placeholder="next tiny thing… (or the thing you just did)" onkeydown="if(event.key==='Enter')addChainItem()">
+          <button class="btn" onclick="addChainItem()">✓ Done</button>
+        </div>
       </div></div>
 
       <div class="card cmp-card"><div class="card-pad">
@@ -1360,6 +1397,7 @@ function renderCompass(){
   if(el) el.textContent = shows>0
     ? `Lifetime tally: ${shows} times you showed up · every one counts · it never resets`
     : `The tally starts at your first log — and from there it only goes up.`;
+  renderChain();
 }
 function updateIfThen(){
   const a=document.getElementById('cmp-anchor')?.value.trim();
@@ -1372,6 +1410,45 @@ function saveCompassFloor(){
   c.floorAnchor=document.getElementById('cmp-anchor').value.trim();
   c.floorAction=document.getElementById('cmp-action').value.trim();
   saveCompass(c); updateIfThen();
+}
+
+/* ── momentum chain: zero-friction micro wins ── */
+function logMicro(name){
+  const now=new Date();
+  const entry={date:now.toISOString().slice(0,10),type:'micro',name,result:'done',
+    ts:now.toTimeString().slice(0,5)};
+  const logs=load(STORE_LOG);
+  logs.unshift(entry); logs.sort((a,b)=>b.date.localeCompare(a.date));
+  save(STORE_LOG,logs);
+}
+function completeFloor(){
+  const c=loadCompass();
+  logMicro(c.floorAction||'Today\u2019s floor');
+  flashFloor('Logged. That counts \u2014 the tally just went up.');
+  renderCompass();
+}
+function addChainItem(){
+  const inp=document.getElementById('cmp-next');
+  const name=inp.value.trim(); if(!name)return;
+  logMicro(name);
+  inp.value=''; inp.focus();
+  flashFloor('\u2713 Chained.');
+  renderCompass();
+}
+let _flashTimer=null;
+function flashFloor(msg){
+  const el=document.getElementById('cmp-floor-flash'); if(!el)return;
+  el.textContent=msg; el.style.color='var(--green)';
+  clearTimeout(_flashTimer);
+  _flashTimer=setTimeout(()=>{el.textContent='';},3200);
+}
+function renderChain(){
+  const el=document.getElementById('cmp-chain-list'); if(!el)return;
+  const today=new Date().toISOString().slice(0,10);
+  const wins=load(STORE_LOG).filter(l=>l.type==='micro'&&l.date===today);
+  el.innerHTML=wins.length
+    ? wins.map(w=>`<div class="chain-row"><span class="chain-check">\u2713</span><span>${w.name}</span><span class="chain-time">${w.ts||''}</span></div>`).join('')
+    : '';
 }
 function openCalm(){ document.getElementById('calm-modal').classList.add('open'); }
 
@@ -2325,6 +2402,15 @@ function renderMoodHistory(){
 function renderLog(){
   const logs=load(STORE_LOG);
   const taskLogs=logs.filter(l=>l.type==='task'),habitLogs=logs.filter(l=>l.type==='habit');
+  const microLogs=logs.filter(l=>l.type==='micro');
+  const mWrap=document.getElementById('log-micro-wrap');
+  const mEl=document.getElementById('log-micro');
+  if(mWrap&&mEl){
+    if(microLogs.length){
+      mWrap.style.display='';
+      mEl.innerHTML=microLogs.map(l=>`<div class="micro-row"><span class="micro-date">${fmtDate(l.date)}</span><span class="chain-check">✓</span><span>${l.name}</span><span class="chain-time">${l.ts||''}</span></div>`).join('');
+    } else { mWrap.style.display='none'; }
+  }
   const renderRow=l=>{
     const timeStr=(l.timeHours||l.timeMins)?`⏱ ${l.timeHours||0}h ${l.timeMins||0}m`:'';
     const spoonStr=l.spoonActual?`⚡ ${l.spoonActual}/${SPOON_MAX}`:'';
