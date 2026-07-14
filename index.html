@@ -4,35 +4,46 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 /* ══════════════════════════════════════
    DESIGN TOKENS
 ══════════════════════════════════════ */
 :root {
-  --accent:       #4f7aff;
-  --accent-dim:   #1a2e6e;
-  --bg:           #0e0f13;
-  --bg2:          #15161c;
-  --bg3:          #1c1e27;
-  --border:       #2a2c38;
-  --border-hi:    #3d4057;
-  --text:         #e8eaf2;
-  --text-muted:   #7b7f99;
-  --text-dim:     #4a4e6a;
-  --green:        #3ecf8e;
-  --green-dim:    #0e3324;
-  --red:          #ff5f6d;
-  --red-dim:      #3a1218;
-  --amber:        #f5a623;
-  --amber-dim:    #3a2800;
-  --purple:       #a78bfa;
-  --purple-dim:   #2e1f5e;
-  --mono: 'IBM Plex Mono', monospace;
-  --sans: 'Sora', sans-serif;
-  --r:   8px;
-  --rl:  12px;
+  /* ── Lamplit: warm, dim, low-stimulation. Energy rendered as light. ── */
+  --accent:       #d9b06a;   /* honey-gold — the warmth of energy */
+  --accent-soft:  #e6c789;   /* lighter honey for hovers */
+  --accent-dim:   #3a2e1a;   /* deep honey for selected surfaces */
+  --glow:         rgba(217,176,106,.45); /* the signature energy glow */
+
+  --bg:           #1a1613;   /* warm ink */
+  --bg2:          #221d18;   /* raised surface */
+  --bg3:          #2a2420;   /* inset / inputs / chips */
+  --border:       #352e27;
+  --border-hi:    #4c4339;
+
+  --text:         #ece4d8;   /* warm off-white — easier than pure white */
+  --text-muted:   #a89c8c;
+  --text-dim:     #786d5d;
+
+  --green:        #7fb891;   /* calm sage — done */
+  --green-dim:    #1e2e22;
+  --green-glow:   rgba(127,184,145,.4);
+  --red:          #d98a8a;   /* dusty rose — gentle, never alarming */
+  --red-dim:      #33201f;
+  --amber:        #e0a54f;
+  --amber-dim:    #33260f;
+  --purple:       #b09be0;
+  --purple-dim:   #2a2140;
+
+  --mono:    'IBM Plex Mono', monospace;
+  --sans:    'Sora', sans-serif;
+  --display: 'Fraunces', Georgia, serif;
+  --r:   9px;
+  --rl:  14px;
   --sidebar-w: 220px;
 }
 
@@ -44,13 +55,33 @@ html { font-size: 14px; }
 body {
   font-family: var(--sans);
   background: var(--bg);
+  /* a barely-there warm wash, like lamplight pooling from the top-left */
+  background-image: radial-gradient(1200px 800px at 0% 0%, rgba(217,176,106,.05), transparent 60%);
+  background-attachment: fixed;
   color: var(--text);
   height: 100vh;
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
 }
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 4px; }
+
+/* Quality floor: visible focus, honoured reduced-motion */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
 
 /* ══════════════════════════════════════
    DESKTOP SHELL — sidebar + main
@@ -78,18 +109,20 @@ body {
   flex-shrink: 0;
 }
 .logo-name {
-  font-family: var(--mono);
-  font-size: 13px;
+  font-family: var(--display);
+  font-size: 22px;
   font-weight: 500;
-  letter-spacing: .06em;
-  color: var(--accent);
-  text-transform: uppercase;
+  letter-spacing: -.01em;
+  color: var(--text);
+  line-height: 1.1;
 }
 .logo-sub {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--text-dim);
-  margin-top: 2px;
+  margin-top: 4px;
   font-family: var(--mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
 }
 
 /* Nav groups */
@@ -145,7 +178,7 @@ body {
   background: var(--bg2);
   border-bottom: 1px solid var(--border);
 }
-.top-bar-title { font-size: 18px; font-weight: 600; }
+.top-bar-title { font-family: var(--display); font-size: 22px; font-weight: 500; letter-spacing: -.01em; }
 .top-bar-action { display: flex; gap: 8px; align-items: center; }
 
 /* Content scroll area */
@@ -187,8 +220,8 @@ body {
 }
 .btn:hover { border-color: var(--accent); color: var(--accent); }
 .btn:active { opacity: .85; }
-.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-.btn-primary:hover { background: #3a65e8; border-color: #3a65e8; color: #fff; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 500; }
+.btn-primary:hover { background: var(--accent-soft); border-color: var(--accent-soft); color: var(--bg); box-shadow: 0 0 12px var(--glow); }
 .btn-sm { font-size: 11px; padding: 4px 10px; }
 .btn-ghost { background: transparent; border-color: transparent; color: var(--text-muted); }
 .btn-ghost:hover { color: var(--text); background: var(--bg3); border-color: var(--border); }
@@ -273,7 +306,7 @@ body {
 }
 .modal::before { display: none; }
 .modal-overlay.open .modal { transform: translateY(0) scale(1); }
-.modal-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
+.modal-title { font-family: var(--display); font-size: 19px; font-weight: 500; letter-spacing: -.01em; margin-bottom: 16px; }
 
 /* Fields */
 .field { margin-bottom: 12px; }
@@ -322,91 +355,7 @@ body {
   transition: all .12s;
 }
 .spoon-btn:hover { border-color: var(--accent); color: var(--accent); }
-.spoon-btn.selected { background: var(--accent); border-color: var(--accent); color: #fff; }
-
-/* ── mastery / pleasure scale ── */
-.scale-note {
-  font-size: 11px; color: var(--text-muted); line-height: 1.6;
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--r); padding: 8px 10px; margin: -6px 0 16px;
-}
-
-/* ── rough-moment button: always same spot, deliberately quiet ── */
-.btn-calm {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-  font-size: 11px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  white-space: nowrap;
-}
-.btn-calm:hover { border-color: var(--border-hi); color: var(--text); filter: none; }
-
-/* ── compass view ── */
-.cmp-card { margin-bottom: 14px; max-width: 760px; }
-.cmp-card .card-pad { padding: 2px; }
-.cmp-title {
-  font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
-  color: var(--text-muted); margin-bottom: 10px;
-}
-.cmp-line { font-size: 13px; line-height: 1.7; color: var(--text); padding: 3px 0; }
-.cmp-line strong { color: var(--text); }
-.cmp-sub { font-size: 11px; color: var(--text-muted); line-height: 1.65; }
-.cmp-quote {
-  border-left: 2px solid var(--accent);
-  background: var(--bg2);
-  border-radius: var(--r);
-  padding: 12px 14px;
-  font-size: 13px; line-height: 1.7; font-style: italic; color: var(--text);
-  margin: 8px 0;
-}
-.cmp-ifthen {
-  font-family: var(--mono); font-size: 12px; color: var(--green);
-  background: var(--green-dim); border-radius: var(--r);
-  padding: 8px 12px; margin-top: 10px; line-height: 1.6;
-}
-.cmp-tally { font-family: var(--mono); font-size: 12px; color: var(--text-muted); margin-top: 10px; }
-.cmp-details summary {
-  cursor: pointer; font-size: 12px; color: var(--text-muted);
-  padding: 6px 0; list-style: none; user-select: none;
-}
-.cmp-details summary::before { content: '▸ '; }
-.cmp-details[open] summary::before { content: '▾ '; }
-.cmp-details summary:hover { color: var(--text); }
-
-/* ── calm overlay (despair protocol) ── */
-.calm-modal { max-width: 560px; }
-.calm-step { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
-.calm-step:last-of-type { border-bottom: none; }
-.calm-num {
-  flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
-  background: var(--bg3); border: 1px solid var(--border-hi);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--mono); font-size: 11px; color: var(--text-muted);
-}
-.calm-step-body { font-size: 13px; line-height: 1.65; color: var(--text); }
-.calm-step-body em { color: var(--text-muted); }
-
-/* ── momentum chain ── */
-.chain-input-row { display: flex; gap: 8px; margin-top: 8px; }
-.chain-input-row input {
-  flex: 1; background: var(--bg3); border: 1px solid var(--border);
-  border-radius: var(--r); color: var(--text); padding: 8px 12px;
-  font-family: var(--sans); font-size: 13px; transition: border-color .12s;
-}
-.chain-input-row input:focus { border-color: var(--accent); outline: none; }
-.chain-row {
-  display: flex; gap: 8px; align-items: baseline;
-  font-size: 13px; padding: 4px 0; color: var(--text);
-}
-.chain-check { color: var(--green); font-family: var(--mono); flex-shrink: 0; }
-.chain-time { font-family: var(--mono); font-size: 10px; color: var(--text-dim); margin-left: auto; flex-shrink: 0; }
-
-/* small wins in log view */
-.micro-row { display: flex; gap: 10px; align-items: baseline; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
-.micro-row:last-child { border-bottom: none; }
-.micro-date { font-family: var(--mono); font-size: 10px; color: var(--text-dim); flex-shrink: 0; width: 64px; }
+.spoon-btn.selected { background: var(--accent); border-color: var(--accent); color: var(--bg); box-shadow: 0 0 10px var(--glow); }
 
 .modal-footer {
   display: flex;
@@ -449,8 +398,9 @@ body {
   font-size: 9px;
   display: flex; align-items: center; justify-content: center;
 }
-.spoon.fe { background: var(--accent); border-color: var(--accent); }
-.spoon.fa { background: var(--green);  border-color: var(--green); }
+/* Signature: filled energy reads as light */
+.spoon.fe { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 7px var(--glow); }
+.spoon.fa { background: var(--green);  border-color: var(--green);  box-shadow: 0 0 7px var(--green-glow); }
 
 /* ══════════════════════════════════════
    CRR (Cost / Risk / Reward)
@@ -567,7 +517,7 @@ body {
 .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
 .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--rl); padding: 14px 16px; }
 .stat-lbl  { font-family: var(--mono); font-size: 10px; color: var(--text-muted); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 4px; }
-.stat-val  { font-size: 24px; font-weight: 500; }
+.stat-val  { font-family: var(--display); font-size: 30px; font-weight: 500; line-height: 1; }
 .stat-sub  { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
 /* ══════════════════════════════════════
@@ -647,7 +597,7 @@ body {
 .mood-stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
 .mood-stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--rl); padding: 12px 14px; }
 .mood-stat-lbl  { font-family: var(--mono); font-size: 9px; color: var(--text-muted); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 4px; }
-.mood-stat-val  { font-size: 20px; font-weight: 500; }
+.mood-stat-val  { font-family: var(--display); font-size: 26px; font-weight: 500; line-height: 1; }
 .mood-stat-sub  { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
 
 .act-corr-panel { background: var(--bg2); border: 1px solid var(--accent); border-radius: var(--rl); padding: 16px; margin-bottom: 12px; display: none; }
@@ -708,13 +658,6 @@ body {
   </div>
 
   <div class="nav-group">
-    <div class="nav-section-label">Start here</div>
-    <div class="nav-tab" id="nav-compass" onclick="showView('compass')">
-      <span class="nt-icon">✦</span><span class="nt-label">Compass</span>
-    </div>
-  </div>
-
-  <div class="nav-group">
     <div class="nav-section-label">Tasks</div>
     <div class="nav-tab active" id="nav-active"  onclick="showView('active')">
       <span class="nt-icon">▶</span><span class="nt-label">Active</span>
@@ -760,10 +703,7 @@ body {
   <!-- Top bar: title + primary action, updated by showView() -->
   <div class="top-bar">
     <div class="top-bar-title" id="top-bar-title">Active tasks</div>
-    <div style="display:flex;gap:10px;align-items:center;">
-      <button class="btn-calm" onclick="openCalm()" title="Open the despair protocol — for when the thoughts get loud">☁ Rough moment</button>
-      <div class="top-bar-action" id="top-bar-action"></div>
-    </div>
+    <div class="top-bar-action" id="top-bar-action"></div>
   </div>
 
   <!-- Scrollable content -->
@@ -916,10 +856,6 @@ body {
 
     <!-- ══ LOG VIEW ══ -->
     <div id="view-log" class="view">
-      <div id="log-micro-wrap" style="display:none;">
-        <div class="log-section-title">Small wins</div>
-        <div class="card"><div id="log-micro"></div></div>
-      </div>
       <div class="log-cols">
         <div>
           <div class="log-section-title">Tasks</div>
@@ -930,65 +866,6 @@ body {
           <div class="card"><div id="log-habits"></div></div>
         </div>
       </div>
-    </div>
-
-    <!-- ══ COMPASS VIEW ══ -->
-    <div id="view-compass" class="view">
-
-      <div class="card cmp-card"><div class="card-pad">
-        <div class="cmp-title">☀ The morning read · 30 seconds</div>
-        <div class="cmp-line"><strong>1. My worth is not my output.</strong> Today's tasks are things I do, not things I am.</div>
-        <div class="cmp-line"><strong>2. The meter is offline.</strong> Accomplishment won't feel like anything for a while — burnout physics, not failure. Trust the log, not the mirror.</div>
-        <div class="cmp-line"><strong>3. Resistance gets to come along.</strong> Reluctance and action can happen at the same time. One battle, not two.</div>
-        <div class="cmp-line"><strong>4. The tally only goes up.</strong> Nothing I skip today erases anything I've ever done.</div>
-        <div class="cmp-line"><strong>5. One thing counts.</strong> The floor is the win. Everything above it is bonus.</div>
-      </div></div>
-
-      <div class="card cmp-card"><div class="card-pad">
-        <div class="cmp-title">◎ The one floor</div>
-        <div class="cmp-sub" style="margin-bottom:10px;">One absurdly small action, anchored to a transition — an event, never a clock time. Everything else today is available, not scheduled.</div>
-        <div class="field-row">
-          <div class="field"><label>The anchor (a transition)</label>
-            <input type="text" id="cmp-anchor" placeholder="e.g. after I close my work laptop" onchange="saveCompassFloor()"></div>
-          <div class="field"><label>The action (absurdly small)</label>
-            <input type="text" id="cmp-action" placeholder="e.g. open the sketchbook" onchange="saveCompassFloor()"></div>
-        </div>
-        <div class="cmp-ifthen" id="cmp-ifthen">If … , then I …</div>
-        <div style="display:flex;gap:8px;align-items:center;margin-top:10px;">
-          <button class="btn btn-primary" onclick="completeFloor()">✓ Floor done</button>
-          <span class="cmp-sub" id="cmp-floor-flash" style="min-height:16px;"></span>
-        </div>
-        <div class="cmp-tally" id="cmp-tally"></div>
-
-        <hr class="field-div" style="margin:14px 0;">
-        <div class="cmp-title" style="margin-bottom:6px;">⚡ Momentum chain</div>
-        <div class="cmp-sub" style="margin-bottom:8px;">Did a thing? Log it — one line, no forms. Riding momentum? Keep chaining. Stop whenever; an ended chain is a finished chain, never a broken one.</div>
-        <div id="cmp-chain-list"></div>
-        <div class="chain-input-row">
-          <input type="text" id="cmp-next" placeholder="next tiny thing… (or the thing you just did)" onkeydown="if(event.key==='Enter')addChainItem()">
-          <button class="btn" onclick="addChainItem()">✓ Done</button>
-        </div>
-      </div></div>
-
-      <div class="card cmp-card"><div class="card-pad">
-        <div class="cmp-title">🗣 The honest toolkit — when resistance rises</div>
-        <div class="cmp-sub">Never say anything your lie detector would flag. Accuracy regulates; persuasion backfires.</div>
-        <div class="cmp-quote">"There's the resistance. Of course it's here — transitions cost you extra and today's tank is low. It's allowed to stay. We're doing ten minutes anyway, and it's allowed to feel bad the whole time."</div>
-        <details class="cmp-details"><summary>The three tools behind it</summary>
-          <div class="cmp-line"><strong>Name it, precisely.</strong> "There is dread in my chest and my face is clenching." Accurate words physically turn the alarm down. <em>"I notice dread showing up"</em> separates; <em>"everything is hopeless"</em> immerses.</div>
-          <div class="cmp-line"><strong>Use "you" or your own name.</strong> "You're allowed to find this hard." It borrows the kindness circuit that already works — the one you use on other people.</div>
-          <div class="cmp-line"><strong>Acknowledge + choose, promise nothing.</strong> The resistance gets a seat. It doesn't drive. Ten minutes, allowed to feel bad the whole time.</div>
-        </details>
-      </div></div>
-
-      <div class="card cmp-card"><div class="card-pad">
-        <div class="cmp-title">🛡 Time defense</div>
-        <div class="cmp-line"><strong>The universal reply:</strong> "I'll check and let you know." Every request, always. It converts pressure into a decision.</div>
-        <div class="cmp-line"><strong>The decision test:</strong> would I say yes if it were tomorrow? Is this want — or assumed obligation?</div>
-        <div class="cmp-line"><strong>Assumed rules are not real rules.</strong> Nobody is owed coffee, an instant reply, or your Saturday.</div>
-        <div class="cmp-sub" style="margin-top:8px;">Good things are not intrusions. People who fill the tank don't count as claims.</div>
-      </div></div>
-
     </div>
 
   </div><!-- /content -->
@@ -1146,12 +1023,6 @@ body {
   <div class="field"><label>Actual energy used (spoons)</label>
     <div class="spoon-picker" id="hlog-spoon-actual"></div></div>
   <hr class="field-div">
-  <div class="field"><label>Did it move me? · mastery <span style="color:var(--text-dim);">(optional — tap again to clear)</span></label>
-    <div class="spoon-picker" id="hlog-mastery"></div></div>
-  <div class="field"><label>Did I enjoy it? · pleasure <span style="color:var(--text-dim);">(optional)</span></label>
-    <div class="spoon-picker" id="hlog-pleasure"></div></div>
-  <div class="scale-note">Low numbers are expected during recovery — and they still count. Judge the rep by whether it moved you an inch out of shutdown, never by how it felt.</div>
-  <hr class="field-div">
   <div class="field"><label>Time spent</label>
     <div class="time-row">
       <input type="number" id="hlog-hours" min="0" max="99" placeholder="0"><span>hr</span>
@@ -1168,34 +1039,6 @@ body {
   <div class="modal-footer">
     <button class="btn" onclick="closeModal('hlog')">Cancel</button>
     <button class="btn btn-primary" onclick="saveHlog()">Save entry</button>
-  </div>
-</div>
-</div>
-
-<!-- CALM / ROUGH MOMENT OVERLAY -->
-<div class="modal-overlay" id="calm-modal">
-<div class="modal calm-modal">
-  <div class="modal-title">☁ Rough moment</div>
-  <div class="cmp-sub" style="margin-bottom:10px;">"It doesn't matter anyway" has a signature. It's a symptom, not a conclusion — a weather report, not a prophecy. Run this in order. No skipping to step 4.</div>
-
-  <div class="calm-step"><div class="calm-num">1</div><div class="calm-step-body"><strong>Name it.</strong> Say: "This is a flashback signature, not an assessment. I am feeling the past."</div></div>
-  <div class="calm-step"><div class="calm-num">2</div><div class="calm-step-body"><strong>Ground the body — 60 seconds.</strong> Feet flat. One hand on chest. Three long, slow exhales. Name 5 things you see, 3 you hear. Say out loud where you are and what year it is.</div></div>
-  <div class="calm-step"><div class="calm-num">3</div><div class="calm-step-body"><strong>Answer the critic — one line, no debate.</strong> "I don't have to earn the right to exist." It can sit in the room. It doesn't drive.</div></div>
-  <div class="calm-step"><div class="calm-num">4</div><div class="calm-step-body"><strong>Shrink and act — or rest on purpose.</strong> The doorknob version only: open the book, don't read it. Pick up the pencil, don't draw. Momentum catches or it doesn't — both are data. Genuinely empty? Lie down <em>deliberately</em>, with a decided end. Chosen rest is regulation.</div></div>
-  <div class="calm-step"><div class="calm-num">5</div><div class="calm-step-body"><strong>Don't check the feeling afterwards.</strong> Seed rule. Act, log it, walk away.</div></div>
-
-  <details class="cmp-details" style="margin-top:10px;"><summary>Flashback quick card — for sudden floods</summary>
-    <div class="cmp-line">· "I'm having an emotional flashback."</div>
-    <div class="cmp-line">· "I feel afraid, but I am not in danger. I am safe, now, here."</div>
-    <div class="cmp-line">· To the younger part: "I've got you. You're allowed to be here."</div>
-    <div class="cmp-line">· Slow exhale. Feel your feet. Unclench the jaw and face.</div>
-    <div class="cmp-line">· Let it pass. Every flashback so far has ended.</div>
-  </details>
-
-  <div class="cmp-sub" style="margin-top:12px;">Bigger than this card? A human beats a protocol — girlfriend, D&amp;D group, one message counts. If it's acutely dark: <strong>113.nl · 0800-0113</strong>, 24/7.</div>
-
-  <div class="modal-footer">
-    <button class="btn btn-primary" onclick="closeModal('calm')">Back</button>
   </div>
 </div>
 </div>
@@ -1241,14 +1084,13 @@ const SPOON_MAX      = 5;
 const DAYS_SHOWN     = 7;
 const CHART_DAYS     = 14;
 const STORE_ACT      = 'tr_activities';
-const STORE_COMPASS  = 'tr_compass';
 
 const MOODS = [
-  { id:'rad',   emoji:'😄', label:'Rad',   color:'#3ecf8e', bg:'#0e3324' },
-  { id:'good',  emoji:'🙂', label:'Good',  color:'#4f7aff', bg:'#1a2e6e' },
-  { id:'meh',   emoji:'😐', label:'Meh',   color:'#f5a623', bg:'#3a2800' },
-  { id:'bad',   emoji:'😔', label:'Bad',   color:'#ff5f6d', bg:'#3a1218' },
-  { id:'awful', emoji:'😣', label:'Awful', color:'#a78bfa', bg:'#2e1f5e' },
+  { id:'rad',   emoji:'😄', label:'Rad',   color:'#7fb891', bg:'#1e2e22' },
+  { id:'good',  emoji:'🙂', label:'Good',  color:'#8fa9e0', bg:'#212a3a' },
+  { id:'meh',   emoji:'😐', label:'Meh',   color:'#e0a54f', bg:'#33260f' },
+  { id:'bad',   emoji:'😔', label:'Bad',   color:'#d98a8a', bg:'#33201f' },
+  { id:'awful', emoji:'😣', label:'Awful', color:'#b09be0', bg:'#2a2140' },
 ];
 
 /* default activities with emoji + category */
@@ -1313,30 +1155,6 @@ function buildSpoonPicker(id, sel) {
   }
 }
 const getSpoon = id => { const s=document.querySelector('#'+id+' .spoon-btn.selected'); return s?+s.textContent:null; };
-
-/* optional 1–5 scale: same look as spoons, but tapping the selected value clears it */
-function buildScalePicker(id, sel) {
-  const el=document.getElementById(id); if(!el)return; el.innerHTML='';
-  for(let i=1;i<=SPOON_MAX;i++){
-    const b=document.createElement('button');
-    b.className='spoon-btn'+(i===sel?' selected':'');
-    b.textContent=i; b.type='button';
-    b.onclick=()=>{
-      const was=b.classList.contains('selected');
-      el.querySelectorAll('.spoon-btn').forEach(x=>x.classList.remove('selected'));
-      if(!was) b.classList.add('selected');
-    };
-    el.appendChild(b);
-  }
-}
-const getScale = getSpoon;
-
-/* compass store is an object, not a list */
-function loadCompass(){
-  try { const c=JSON.parse(localStorage.getItem(STORE_COMPASS)||'{}'); return (c && !Array.isArray(c) && typeof c==='object') ? c : {}; }
-  catch(e){ return {}; }
-}
-const saveCompass = c => localStorage.setItem(STORE_COMPASS, JSON.stringify(c));
 const spoonsHtml = (n,type) => Array.from({length:SPOON_MAX},(_,i)=>
   `<div class="spoon ${i<n?(type==='actual'?'fa':'fe'):''}">
     ${i<n?'●':'○'}
@@ -1352,7 +1170,6 @@ const VIEW_CONFIG = {
   habits:  { title: 'Habits',         action: ()=>`<button class="btn btn-primary" onclick="openHabitModal()">＋ New habit</button>` },
   mood:    { title: 'Mood tracker',   action: ()=>'' },
   log:     { title: 'Activity log',   action: ()=>'' },
-  compass: { title: 'Compass',        action: ()=>'' },
 };
 
 function fabAction(){ /* desktop: no FAB */ }
@@ -1379,78 +1196,7 @@ function showView(name) {
   if(name==='habits')  renderHabits();
   if(name==='mood')    renderMood();
   if(name==='log')     renderLog();
-  if(name==='compass') renderCompass();
 }
-
-/* ═══════════════════════════════════════
-   COMPASS — the daily anchor
-═══════════════════════════════════════ */
-function renderCompass(){
-  const c=loadCompass();
-  const a=document.getElementById('cmp-anchor'), x=document.getElementById('cmp-action');
-  if(a) a.value=c.floorAnchor||'';
-  if(x) x.value=c.floorAction||'';
-  updateIfThen();
-  const logs=load(STORE_LOG);
-  const shows=logs.filter(l=>l.result==='done'||l.type==='task').length;
-  const el=document.getElementById('cmp-tally');
-  if(el) el.textContent = shows>0
-    ? `Lifetime tally: ${shows} times you showed up · every one counts · it never resets`
-    : `The tally starts at your first log — and from there it only goes up.`;
-  renderChain();
-}
-function updateIfThen(){
-  const a=document.getElementById('cmp-anchor')?.value.trim();
-  const x=document.getElementById('cmp-action')?.value.trim();
-  const el=document.getElementById('cmp-ifthen'); if(!el)return;
-  el.textContent=`If ${a||'…'}, then I ${x||'…'}.`;
-}
-function saveCompassFloor(){
-  const c=loadCompass();
-  c.floorAnchor=document.getElementById('cmp-anchor').value.trim();
-  c.floorAction=document.getElementById('cmp-action').value.trim();
-  saveCompass(c); updateIfThen();
-}
-
-/* ── momentum chain: zero-friction micro wins ── */
-function logMicro(name){
-  const now=new Date();
-  const entry={date:now.toISOString().slice(0,10),type:'micro',name,result:'done',
-    ts:now.toTimeString().slice(0,5)};
-  const logs=load(STORE_LOG);
-  logs.unshift(entry); logs.sort((a,b)=>b.date.localeCompare(a.date));
-  save(STORE_LOG,logs);
-}
-function completeFloor(){
-  const c=loadCompass();
-  logMicro(c.floorAction||'Today\u2019s floor');
-  flashFloor('Logged. That counts \u2014 the tally just went up.');
-  renderCompass();
-}
-function addChainItem(){
-  const inp=document.getElementById('cmp-next');
-  const name=inp.value.trim(); if(!name)return;
-  logMicro(name);
-  inp.value=''; inp.focus();
-  flashFloor('\u2713 Chained.');
-  renderCompass();
-}
-let _flashTimer=null;
-function flashFloor(msg){
-  const el=document.getElementById('cmp-floor-flash'); if(!el)return;
-  el.textContent=msg; el.style.color='var(--green)';
-  clearTimeout(_flashTimer);
-  _flashTimer=setTimeout(()=>{el.textContent='';},3200);
-}
-function renderChain(){
-  const el=document.getElementById('cmp-chain-list'); if(!el)return;
-  const today=new Date().toISOString().slice(0,10);
-  const wins=load(STORE_LOG).filter(l=>l.type==='micro'&&l.date===today);
-  el.innerHTML=wins.length
-    ? wins.map(w=>`<div class="chain-row"><span class="chain-check">\u2713</span><span>${w.name}</span><span class="chain-time">${w.ts||''}</span></div>`).join('')
-    : '';
-}
-function openCalm(){ document.getElementById('calm-modal').classList.add('open'); }
 
 /* ═══════════════════════════════════════
    MODALS
@@ -1810,8 +1556,6 @@ function openHlogModal(habitId,date){
   document.getElementById('hlog-btn-skip').classList.toggle('btn-primary',_hlogResult==='skip');
   buildSpoonPicker('hlog-spoon-est',existing?.spoonEst??habit.spoonEst??null);
   buildSpoonPicker('hlog-spoon-actual',existing?.spoonActual??null);
-  buildScalePicker('hlog-mastery',existing?.mastery??null);
-  buildScalePicker('hlog-pleasure',existing?.pleasure??null);
   document.getElementById('hlog-modal').classList.add('open');
 }
 function saveHlog(){
@@ -1827,8 +1571,6 @@ function saveHlog(){
     timeHours:parseInt(document.getElementById('hlog-hours').value)||0,
     timeMins:parseInt(document.getElementById('hlog-mins').value)||0,
     transitionDone:document.getElementById('hlog-transition').value,
-    mastery:getScale('hlog-mastery'),
-    pleasure:getScale('hlog-pleasure'),
     reflection:document.getElementById('hlog-reflection').value.trim()};
   const logs=load(STORE_LOG).filter(l=>!(l.type==='habit'&&l.habitId===habitId&&l.date===date));
   logs.unshift(entry); logs.sort((a,b)=>b.date.localeCompare(a.date));
@@ -1861,14 +1603,14 @@ function renderHabits(){
     _chart=new Chart(document.getElementById('spoon-chart').getContext('2d'),{type:'line',data:{
       labels:cd.map(d=>shortDay(d)+' '+d.slice(5)),
       datasets:[
-        {label:'Estimated',data:estPts,borderColor:'#4f7aff',backgroundColor:'rgba(79,122,255,.1)',pointBackgroundColor:'#4f7aff',tension:.35,spanGaps:true},
-        {label:'Actual',data:actPts,borderColor:'#3ecf8e',backgroundColor:'rgba(62,207,142,.07)',pointBackgroundColor:'#3ecf8e',tension:.35,spanGaps:true}
+        {label:'Estimated',data:estPts,borderColor:'#d9b06a',backgroundColor:'rgba(217,176,106,.12)',pointBackgroundColor:'#d9b06a',tension:.35,spanGaps:true},
+        {label:'Actual',data:actPts,borderColor:'#7fb891',backgroundColor:'rgba(127,184,145,.08)',pointBackgroundColor:'#7fb891',tension:.35,spanGaps:true}
       ]},options:{responsive:true,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{labels:{color:'#7b7f99',font:{family:'IBM Plex Mono',size:11}}},
-        tooltip:{backgroundColor:'#1c1e27',borderColor:'#3d4057',borderWidth:1,titleColor:'#e8eaf2',bodyColor:'#7b7f99',
+      plugins:{legend:{labels:{color:'#a89c8c',font:{family:'IBM Plex Mono',size:11}}},
+        tooltip:{backgroundColor:'#2a2420',borderColor:'#4c4339',borderWidth:1,titleColor:'#ece4d8',bodyColor:'#a89c8c',
           callbacks:{afterBody:items=>{const n=tips[items[0]?.dataIndex];return n?['',...n.split('\n')]:[];}}}},
-      scales:{x:{ticks:{color:'#4a4e6a',font:{family:'IBM Plex Mono',size:10}},grid:{color:'#2a2c38'}},
-        y:{min:0,max:SPOON_MAX,ticks:{stepSize:1,color:'#4a4e6a',font:{family:'IBM Plex Mono',size:10}},grid:{color:'#2a2c38'}}}}});
+      scales:{x:{ticks:{color:'#786d5d',font:{family:'IBM Plex Mono',size:10}},grid:{color:'#352e27'}},
+        y:{min:0,max:SPOON_MAX,ticks:{stepSize:1,color:'#786d5d',font:{family:'IBM Plex Mono',size:10}},grid:{color:'#352e27'}}}}});
   }
   /* table */
   if(!habits.length){document.querySelector('#view-habits .card').innerHTML=`<div class="empty"><div class="empty-icon">◎</div><p>No habits yet.</p><button class="btn btn-primary" onclick="openHabitModal()">＋ New habit</button></div>`;return;}
@@ -1999,10 +1741,9 @@ function saveMoodEntry(){
   moodData.sort((a,b)=>b.date.localeCompare(a.date));
   save(STORE_MOOD,moodData);
   document.getElementById('mood-edit-btn').style.display='';
-  // flash
-  const btn=event.target;
-  const orig=btn.textContent; btn.textContent='Saved ✓';
-  setTimeout(()=>btn.textContent=orig,1400);
+  // flash confirmation (robust: don't depend on the global event)
+  const btn=(typeof event!=='undefined'&&event&&event.target)||document.querySelector('#view-mood .btn-primary');
+  if(btn){ const orig=btn.textContent; btn.textContent='Saved ✓'; setTimeout(()=>btn.textContent=orig,1400); }
   renderMoodCalendar();
 }
 
@@ -2118,35 +1859,6 @@ function renderPatterns(){
     }
   });
 
-  // ── 1b. Mastery vs pleasure per habit (behavioral activation lens) ──
-  const mpByHabit={};
-  logs.filter(l=>l.type==='habit'&&(l.mastery!=null||l.pleasure!=null)).forEach(l=>{
-    (mpByHabit[l.habitId]=mpByHabit[l.habitId]||{name:l.name,m:[],p:[]});
-    if(l.mastery!=null)  mpByHabit[l.habitId].m.push(l.mastery);
-    if(l.pleasure!=null) mpByHabit[l.habitId].p.push(l.pleasure);
-  });
-  Object.values(mpByHabit).forEach(h=>{
-    if(h.m.length<MIN_DAYS && h.p.length<MIN_DAYS) return;
-    const avgM=h.m.length?h.m.reduce((a,b)=>a+b,0)/h.m.length:null;
-    const avgP=h.p.length?h.p.reduce((a,b)=>a+b,0)/h.p.length:null;
-    if(avgM!=null&&avgP!=null&&avgM-avgP>=1.2){
-      observations.push({emoji:'◎',
-        text:`<strong>${h.name}</strong> has been giving you a sense of getting somewhere even while enjoyment stays low. That's the expected recovery pattern — enjoyment is the last thing to come back. The reps are landing.`,
-        sub:`${h.m.length} rated entries · mastery ~${avgM.toFixed(1)} vs pleasure ~${avgP.toFixed(1)}`,
-        tone:'good'});
-    } else if(avgP!=null&&avgP>=4&&h.p.length>=MIN_DAYS){
-      observations.push({emoji:'◎',
-        text:`<strong>${h.name}</strong> has been genuinely enjoyable lately. Worth protecting.`,
-        sub:`${h.p.length} rated entries · pleasure ~${avgP.toFixed(1)}`,
-        tone:'good'});
-    } else if(avgM!=null&&avgP!=null&&avgM<=2&&avgP<=2&&h.m.length>=MIN_DAYS){
-      observations.push({emoji:'◎',
-        text:`<strong>${h.name}</strong> has felt flat on both counts lately. Not a verdict — but maybe the floor could shrink, or the anchor could move. Small experiments allowed.`,
-        sub:`${h.m.length} rated entries · mastery ~${avgM.toFixed(1)} · pleasure ~${avgP.toFixed(1)}`,
-        tone:'note'});
-    }
-  });
-
   // ── 2. Energy: estimated vs actual (gentle self-knowledge, not judgment) ──
   const energyLogs=logs.filter(l=>l.spoonEst!=null && l.spoonActual!=null);
   if(energyLogs.length>=MIN_DAYS){
@@ -2252,12 +1964,12 @@ function renderMoodStats(){
   const lctx=document.getElementById('mood-line-chart')?.getContext('2d');
   if(lctx && typeof Chart !== 'undefined') _moodLineChart=new Chart(lctx,{type:'line',data:{
     labels:last30.map(d=>shortDay(d)+' '+d.slice(5)),
-    datasets:[{data:lineData,borderColor:'#4f7aff',backgroundColor:'rgba(79,122,255,.08)',
+    datasets:[{data:lineData,borderColor:'#d9b06a',backgroundColor:'rgba(217,176,106,.10)',
       pointBackgroundColor:lineColors,pointRadius:5,tension:.35,spanGaps:true}]
   },options:{responsive:true,plugins:{legend:{display:false}},
-    scales:{x:{ticks:{color:'#4a4e6a',font:{family:'IBM Plex Mono',size:9}},grid:{color:'#2a2c38'}},
-      y:{min:1,max:5,ticks:{color:'#4a4e6a',font:{family:'IBM Plex Mono',size:9},
-        callback:v=>MOODS.find(m=>moodScore[m.id]===v)?.emoji||v},grid:{color:'#2a2c38'}}}}});
+    scales:{x:{ticks:{color:'#786d5d',font:{family:'IBM Plex Mono',size:9}},grid:{color:'#352e27'}},
+      y:{min:1,max:5,ticks:{color:'#786d5d',font:{family:'IBM Plex Mono',size:9},
+        callback:v=>MOODS.find(m=>moodScore[m.id]===v)?.emoji||v},grid:{color:'#352e27'}}}}});
   // bar chart — mood frequency
   const counts=MOODS.map(m=>moodData.filter(e=>e.mood===m.id).length);
   if(_moodBarChart){_moodBarChart.destroy();_moodBarChart=null;}
@@ -2266,8 +1978,8 @@ function renderMoodStats(){
     labels:MOODS.map(m=>m.emoji+' '+m.label),
     datasets:[{data:counts,backgroundColor:MOODS.map(m=>m.color+'99'),borderColor:MOODS.map(m=>m.color),borderWidth:1,borderRadius:6}]
   },options:{responsive:true,plugins:{legend:{display:false}},
-    scales:{x:{ticks:{color:'#7b7f99',font:{family:'IBM Plex Mono',size:10}},grid:{display:false}},
-      y:{ticks:{color:'#4a4e6a',stepSize:1,font:{family:'IBM Plex Mono',size:10}},grid:{color:'#2a2c38'}}}}});
+    scales:{x:{ticks:{color:'#a89c8c',font:{family:'IBM Plex Mono',size:10}},grid:{display:false}},
+      y:{ticks:{color:'#786d5d',stepSize:1,font:{family:'IBM Plex Mono',size:10}},grid:{color:'#352e27'}}}}});
 }
 
 /* ── activities manager ── */
@@ -2402,21 +2114,11 @@ function renderMoodHistory(){
 function renderLog(){
   const logs=load(STORE_LOG);
   const taskLogs=logs.filter(l=>l.type==='task'),habitLogs=logs.filter(l=>l.type==='habit');
-  const microLogs=logs.filter(l=>l.type==='micro');
-  const mWrap=document.getElementById('log-micro-wrap');
-  const mEl=document.getElementById('log-micro');
-  if(mWrap&&mEl){
-    if(microLogs.length){
-      mWrap.style.display='';
-      mEl.innerHTML=microLogs.map(l=>`<div class="micro-row"><span class="micro-date">${fmtDate(l.date)}</span><span class="chain-check">✓</span><span>${l.name}</span><span class="chain-time">${l.ts||''}</span></div>`).join('');
-    } else { mWrap.style.display='none'; }
-  }
   const renderRow=l=>{
     const timeStr=(l.timeHours||l.timeMins)?`⏱ ${l.timeHours||0}h ${l.timeMins||0}m`:'';
     const spoonStr=l.spoonActual?`⚡ ${l.spoonActual}/${SPOON_MAX}`:'';
     const tranStr=l.transitionDone==='yes'?'✓ trans':l.transitionDone==='no'?'✗ trans':'';
-    const mpStr=(l.mastery!=null||l.pleasure!=null)?['moved '+(l.mastery??'–'),'enjoyed '+(l.pleasure??'–')].join(' · '):'';
-    const meta=[timeStr,spoonStr,mpStr,tranStr].filter(Boolean).join(' · ');
+    const meta=[timeStr,spoonStr,tranStr].filter(Boolean).join(' · ');
     const pill=l.result?`<span class="log-pill ${l.result==='done'?'pill-done':'pill-skip'}">${l.result}</span>`:`<span class="log-pill pill-done">done</span>`;
     return `<div class="log-row">${pill}
       <span class="log-date">${fmtDate(l.date)}</span>
@@ -2437,7 +2139,7 @@ function renderLog(){
 /* ═══════════════════════════════════════
    DATA EXPORT / IMPORT — manual sync
 ═══════════════════════════════════════ */
-const SYNC_KEYS = [STORE_TASKS, STORE_HABITS, STORE_SECTIONS, STORE_LOG, STORE_MOOD, STORE_ACT, STORE_COMPASS];
+const SYNC_KEYS = [STORE_TASKS, STORE_HABITS, STORE_SECTIONS, STORE_LOG, STORE_MOOD, STORE_ACT];
 const SYNC_FILENAME = 'my-tracker-data.json';
 
 function flashSync(msg, isError){
@@ -2456,7 +2158,7 @@ function exportData(){
       _exportedAt: new Date().toISOString(),
       data: {}
     };
-    SYNC_KEYS.forEach(k => { payload.data[k] = JSON.parse(localStorage.getItem(k) || (k===STORE_COMPASS ? '{}' : '[]')); });
+    SYNC_KEYS.forEach(k => { payload.data[k] = JSON.parse(localStorage.getItem(k) || '[]'); });
 
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url  = URL.createObjectURL(blob);
@@ -2519,8 +2221,6 @@ function importData(event){
 ensureDefaultSection();
 ensureActivities();
 ['t-spoon-est','h-spoon-est','log-spoon-actual','hlog-spoon-est','hlog-spoon-actual'].forEach(id=>buildSpoonPicker(id,null));
-['hlog-mastery','hlog-pleasure'].forEach(id=>buildScalePicker(id,null));
-['cmp-anchor','cmp-action'].forEach(id=>document.getElementById(id)?.addEventListener('input',updateIfThen));
 showView('active');
 
 /* PWA removed — desktop version */
