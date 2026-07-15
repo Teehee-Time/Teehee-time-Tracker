@@ -644,6 +644,180 @@ body {
 .log-actual  { font-size: 11px; color: var(--amber); }
 .log-meta    { font-size: 10px; color: var(--text-muted); font-family: var(--mono); margin-top: 2px; }
 .log-refl    { font-size: 11px; color: var(--text-muted); font-style: italic; margin-top: 2px; }
+
+/* ══════════════════════════════════════
+   TODAY — the home surface
+   A calm reading column, not a dashboard.
+   The daily loop lives here: capture in one
+   keystroke, log in one tap.
+══════════════════════════════════════ */
+.today-wrap { max-width: 600px; margin: 0 auto; padding: 4px 0 40px; }
+
+/* Quick capture — the hero. Type + Enter, no modal. */
+.today-capture {
+  display: flex; gap: 10px; align-items: center;
+  margin-bottom: 34px;
+}
+.today-capture input {
+  flex: 1;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  padding: 15px 18px;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.today-capture input::placeholder { color: var(--text-dim); }
+.today-capture input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(217,176,106,.12);
+}
+.today-capture .btn { padding: 13px 20px; border-radius: 12px; }
+
+/* Blocks — each a quiet section led by a serif question */
+.today-block { margin-bottom: 30px; }
+.today-block-hdr {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; margin-bottom: 14px;
+}
+.today-block-hdr h2 {
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -.01em;
+  color: var(--text);
+}
+.today-block-note {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .04em;
+  color: var(--text-dim);
+  text-align: right;
+  flex-shrink: 0;
+}
+.today-block-note a { color: var(--accent); text-decoration: none; }
+.today-block-note a:hover { text-decoration: underline; }
+
+/* Mood faces — one tap logs today */
+.today-moods { display: flex; gap: 8px; }
+.mood-face {
+  flex: 1;
+  aspect-ratio: 1 / 1;
+  max-width: 92px;
+  border: 1.5px solid var(--border);
+  background: var(--bg2);
+  border-radius: 16px;
+  font-size: 30px;
+  line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: transform .12s, border-color .12s, background .12s, box-shadow .12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mood-face:hover { transform: translateY(-2px); border-color: var(--border-hi); }
+.mood-face.selected {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  box-shadow: 0 0 16px var(--glow);
+  transform: translateY(-2px);
+}
+
+/* One-tap rows — habits and tasks share the language */
+.today-list { display: flex; flex-direction: column; }
+.today-row {
+  display: flex; align-items: center; gap: 13px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--border);
+}
+.today-row:last-child { border-bottom: none; }
+
+/* The tap-circle is the signature interaction: energy becomes light */
+.tap-circle {
+  width: 26px; height: 26px; flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid var(--border-hi);
+  background: transparent;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--bg);
+  font-size: 14px;
+  transition: background .15s, border-color .15s, box-shadow .2s, transform .12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.tap-circle:hover { border-color: var(--accent); }
+.tap-circle:active { transform: scale(.88); }
+.tap-circle.done {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 12px var(--glow);
+}
+.tap-circle.done.green { background: var(--green); border-color: var(--green); box-shadow: 0 0 12px var(--green-glow); }
+
+.today-row-body { flex: 1; min-width: 0; }
+.today-row-name {
+  font-size: 14px; color: var(--text);
+  cursor: pointer;
+  transition: color .12s;
+}
+.today-row-name:hover { color: var(--accent); }
+.today-row.done .today-row-name { color: var(--text-dim); }
+.today-row-sub {
+  font-size: 11px; color: var(--text-muted);
+  margin-top: 2px;
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+}
+.today-row-spoons { display: inline-flex; gap: 3px; align-items: center; }
+.today-chip-spoon {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); opacity: .55;
+}
+.today-row-more {
+  flex-shrink: 0; color: var(--text-dim); font-size: 16px;
+  background: none; border: none; cursor: pointer; padding: 4px 6px;
+  border-radius: 6px; line-height: 1;
+}
+.today-row-more:hover { color: var(--text); background: var(--bg3); }
+
+.today-empty {
+  color: var(--text-muted); font-size: 13px;
+  padding: 6px 2px 2px; line-height: 1.6;
+}
+.today-empty a { color: var(--accent); text-decoration: none; }
+.today-empty a:hover { text-decoration: underline; }
+
+.today-footer {
+  text-align: center;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-dim);
+  margin-top: 40px;
+  padding-top: 8px;
+}
+
+/* Drive setup modal specifics */
+.setup-step { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.setup-step:last-of-type { border-bottom: none; }
+.setup-num {
+  flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--accent-dim); color: var(--accent);
+  font-family: var(--mono); font-size: 11px;
+  display: flex; align-items: center; justify-content: center;
+}
+.setup-body { font-size: 13px; line-height: 1.6; color: var(--text); }
+.setup-body .muted { color: var(--text-muted); font-size: 12px; }
+.setup-status {
+  font-size: 12px; font-family: var(--mono);
+  padding: 8px 12px; border-radius: 8px; margin-top: 4px;
+  background: var(--bg3); color: var(--text-muted);
+}
+.setup-status.ok { color: var(--green); }
+@media (prefers-reduced-motion: reduce) {
+  .mood-face, .tap-circle { transition: none; }
+}
 </style>
 </head>
 
@@ -654,13 +828,19 @@ body {
 <nav class="sidebar">
   <div class="logo">
     <div class="logo-name">My Tracker</div>
-    <div class="logo-sub">energy-aware productivity</div>
+    <div class="logo-sub">one small thing is enough</div>
   </div>
 
   <div class="nav-group">
-    <div class="nav-section-label">Tasks</div>
-    <div class="nav-tab active" id="nav-active"  onclick="showView('active')">
-      <span class="nt-icon">▶</span><span class="nt-label">Active</span>
+    <div class="nav-tab active" id="nav-today" onclick="showView('today')">
+      <span class="nt-icon">☀</span><span class="nt-label">Today</span>
+    </div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-section-label">Do</div>
+    <div class="nav-tab" id="nav-active"  onclick="showView('active')">
+      <span class="nt-icon">▶</span><span class="nt-label">Active tasks</span>
     </div>
     <div class="nav-tab" id="nav-backlog" onclick="showView('backlog')">
       <span class="nt-icon">≔</span><span class="nt-label">Backlog</span>
@@ -668,32 +848,33 @@ body {
   </div>
 
   <div class="nav-group">
-    <div class="nav-section-label">Habits</div>
+    <div class="nav-section-label">Track</div>
     <div class="nav-tab" id="nav-habits" onclick="showView('habits')">
       <span class="nt-icon">◎</span><span class="nt-label">Habits</span>
     </div>
-  </div>
-
-  <div class="nav-group">
-    <div class="nav-section-label">Wellbeing</div>
     <div class="nav-tab" id="nav-mood" onclick="showView('mood')">
       <span class="nt-icon">◕</span><span class="nt-label">Mood</span>
     </div>
   </div>
 
   <div class="nav-group">
-    <div class="nav-section-label">History</div>
+    <div class="nav-section-label">Look back</div>
     <div class="nav-tab" id="nav-log" onclick="showView('log')">
       <span class="nt-icon">≡</span><span class="nt-label">Log</span>
     </div>
   </div>
 
   <div class="sidebar-actions">
-    <div class="nav-section-label" style="padding-left:6px;">Data · Sync</div>
-    <button class="btn btn-full btn-sm" onclick="exportData()" title="Download all your data as a JSON file">⬇ Export data</button>
-    <button class="btn btn-full btn-sm" onclick="document.getElementById('import-file').click()" title="Load data from a previously exported file">⬆ Import data</button>
+    <div class="nav-section-label" style="padding-left:6px;">Backup &amp; sync</div>
+    <button class="btn btn-full btn-sm" onclick="driveSave()" id="drive-save-btn" title="Save a backup to your Google Drive">☁ Save to Drive</button>
+    <button class="btn btn-full btn-sm" onclick="driveLoad()" id="drive-load-btn" title="Load your latest backup from Google Drive">⤓ Load from Drive</button>
+    <div style="display:flex;gap:6px;">
+      <button class="btn btn-sm" style="flex:1;" onclick="exportData()" title="Download a backup file">⬇ File</button>
+      <button class="btn btn-sm" style="flex:1;" onclick="document.getElementById('import-file').click()" title="Load from a backup file">⬆ File</button>
+    </div>
     <input type="file" id="import-file" accept="application/json,.json" style="display:none" onchange="importData(event)">
     <div id="sync-status" style="font-size:10px;color:var(--text-dim);text-align:center;margin-top:2px;min-height:13px;font-family:var(--mono);"></div>
+    <button class="btn btn-sm btn-ghost" style="font-size:10px;" onclick="openDriveSetup()">⚙ Google Drive setup</button>
   </div>
 </nav>
 
@@ -709,8 +890,50 @@ body {
   <!-- Scrollable content -->
   <div class="content">
 
+    <!-- ══ TODAY — the home surface ══ -->
+    <div id="view-today" class="view active">
+      <div class="today-wrap">
+
+        <!-- quick capture -->
+        <div class="today-capture">
+          <input type="text" id="today-capture-input" placeholder="Add something to do — just a few words"
+            onkeydown="if(event.key==='Enter')quickAddFromToday()">
+          <button class="btn btn-primary" onclick="quickAddFromToday()">Add</button>
+        </div>
+
+        <!-- mood check -->
+        <section class="today-block">
+          <div class="today-block-hdr">
+            <h2>How are you, right now?</h2>
+            <span class="today-block-note" id="today-mood-note"></span>
+          </div>
+          <div class="today-moods" id="today-moods"></div>
+        </section>
+
+        <!-- habits -->
+        <section class="today-block" id="today-habits-block">
+          <div class="today-block-hdr">
+            <h2>Today's habits</h2>
+            <span class="today-block-note">tap the circle — one is plenty</span>
+          </div>
+          <div class="today-list" id="today-habits"></div>
+        </section>
+
+        <!-- tasks -->
+        <section class="today-block" id="today-tasks-block">
+          <div class="today-block-hdr">
+            <h2>A few things you could do</h2>
+            <span class="today-block-note" id="today-tasks-note"></span>
+          </div>
+          <div class="today-list" id="today-tasks"></div>
+        </section>
+
+        <div class="today-footer" id="today-footer"></div>
+      </div>
+    </div>
+
     <!-- ══ ACTIVE VIEW ══ -->
-    <div id="view-active" class="view active">
+    <div id="view-active" class="view">
       <div id="active-list"></div>
     </div>
 
@@ -1069,6 +1292,45 @@ body {
 </div>
 </div>
 
+<!-- DRIVE SETUP MODAL -->
+<div class="modal-overlay" id="drive-modal">
+<div class="modal">
+  <div class="modal-title">Sync through Google Drive</div>
+  <p style="font-size:13px;line-height:1.65;color:var(--text-muted);margin-bottom:6px;">
+    This keeps one backup file in your Google&nbsp;Drive folder. No login, no password — the site
+    never sees your Google account. Drive's own desktop app carries the file to the cloud and your other PC.
+  </p>
+  <div style="margin:14px 0;">
+    <div class="setup-step">
+      <div class="setup-num">1</div>
+      <div class="setup-body">Make sure <strong>Google Drive for desktop</strong> is installed, so you have a Drive
+        folder on this PC.</div>
+    </div>
+    <div class="setup-step">
+      <div class="setup-num">2</div>
+      <div class="setup-body">Link a file inside that Drive folder — pick an existing backup or create a new
+        <span class="muted">my-tracker-data.json</span>.
+        <div style="margin-top:8px;">
+          <button class="btn btn-primary btn-sm" onclick="driveSetupPick()">Pick / create the sync file</button>
+        </div>
+      </div>
+    </div>
+    <div class="setup-step">
+      <div class="setup-num">3</div>
+      <div class="setup-body">From now on, <strong>Save to Drive</strong> writes straight to it, and
+        <strong>Load from Drive</strong> reads it back — one click, no dialogs.</div>
+    </div>
+  </div>
+  <div id="drive-status" class="setup-status"></div>
+  <div id="drive-unlink-row" style="display:none;margin-top:10px;">
+    <button class="btn btn-sm btn-ghost" style="color:var(--red);" onclick="unlinkDrive()">Unlink this file</button>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" onclick="closeModal('drive')">Done</button>
+  </div>
+</div>
+</div>
+
 
 <script>
 
@@ -1165,6 +1427,7 @@ const spoonsHtml = (n,type) => Array.from({length:SPOON_MAX},(_,i)=>
 ═══════════════════════════════════════ */
 /* ── Desktop view config ── */
 const VIEW_CONFIG = {
+  today:   { title: 'Today',         action: ()=>'' },
   active:  { title: 'Active tasks',  action: ()=>`<button class="btn btn-primary" onclick="openTaskModal()">＋ New task</button>` },
   backlog: { title: 'Backlog',        action: ()=>`<div style="display:flex;gap:8px;"><button class="btn" onclick="openSectionModal()">＋ Section</button><button class="btn btn-primary" onclick="openTaskModal()">＋ New task</button></div>` },
   habits:  { title: 'Habits',         action: ()=>`<button class="btn btn-primary" onclick="openHabitModal()">＋ New habit</button>` },
@@ -1191,6 +1454,7 @@ function showView(name) {
   const actionEl = document.getElementById('top-bar-action');
   if(actionEl && cfg?.action) actionEl.innerHTML = cfg.action();
 
+  if(name==='today')   renderToday();
   if(name==='active')  renderActive();
   if(name==='backlog') renderBacklog();
   if(name==='habits')  renderHabits();
@@ -2137,6 +2401,199 @@ function renderLog(){
 }
 
 /* ═══════════════════════════════════════
+   TODAY — the home surface
+   Capture in one keystroke, log in one tap.
+   Everything here writes to the same stores
+   the other views use, so nothing diverges.
+═══════════════════════════════════════ */
+const TODAY_TASK_LIMIT = 6;
+
+function renderToday(){
+  const t = today();
+  // Orient gently with the date in the top bar
+  const titleEl = document.getElementById('top-bar-title');
+  if(titleEl) titleEl.textContent = new Date().toLocaleDateString('en-GB',{weekday:'long', day:'numeric', month:'long'});
+
+  renderTodayMood();
+  renderTodayHabits();
+  renderTodayTasks();
+
+  // A quiet, rotating-but-calm footer line
+  const footer = document.getElementById('today-footer');
+  if(footer) footer.textContent = 'one small thing is enough';
+}
+
+/* ── Quick capture: type + Enter, no modal ── */
+function quickAddFromToday(){
+  const inp = document.getElementById('today-capture-input');
+  const name = inp.value.trim();
+  if(!name) return;
+  ensureDefaultSection();
+  const sectionId = (load(STORE_SECTIONS)[0]||{}).id || '';
+  const tasks = load(STORE_TASKS);
+  tasks.push({
+    id:genId(), name, sectionId, status:'active',
+    spoonEst:null, steps:[], cost:'', risk:'', reward:'', transitionDone:'',
+    createdAt:today(), completedAt:null, spoonActual:null, timeHours:null, timeMins:null, reflection:''
+  });
+  save(STORE_TASKS, tasks);
+  inp.value='';
+  renderTodayTasks();
+  inp.focus(); // stay ready for the next capture
+}
+
+/* ── Mood: one tap logs today, preserving any note/activities ── */
+function renderTodayMood(){
+  const wrap = document.getElementById('today-moods');
+  if(!wrap) return;
+  const entry = load(STORE_MOOD).find(m=>m.date===today());
+  wrap.innerHTML = MOODS.map(m=>
+    `<button class="mood-face${entry&&entry.mood===m.id?' selected':''}" title="${m.label}"
+       onclick="quickMoodToday('${m.id}')" aria-label="${m.label}">${m.emoji}</button>`
+  ).join('');
+  const note = document.getElementById('today-mood-note');
+  if(note){
+    if(entry){
+      note.innerHTML = `logged · <a href="#" onclick="openMoodDetailToday();return false;">add a note or activities</a>`;
+    } else {
+      note.textContent = 'one tap';
+    }
+  }
+}
+function quickMoodToday(id){
+  const t = today();
+  const data = load(STORE_MOOD);
+  const existing = data.find(m=>m.date===t);
+  const rest = data.filter(m=>m.date!==t);
+  rest.push({ date:t, mood:id, activities: existing?.activities || [], note: existing?.note || '' });
+  rest.sort((a,b)=>b.date.localeCompare(a.date));
+  save(STORE_MOOD, rest);
+  renderTodayMood();
+}
+function openMoodDetailToday(){
+  showView('mood');
+  openMoodEntry(today());
+}
+
+/* ── Habits: one tap toggles today's "done", keeping any detail ── */
+function renderTodayHabits(){
+  const wrap = document.getElementById('today-habits');
+  const block = document.getElementById('today-habits-block');
+  if(!wrap) return;
+  const habits = load(STORE_HABITS);
+  if(!habits.length){
+    if(block) block.style.display='none';
+    wrap.innerHTML='';
+    return;
+  }
+  if(block) block.style.display='';
+  const logs = load(STORE_LOG);
+  wrap.innerHTML = habits.map(h=>{
+    const entry = logs.find(l=>l.type==='habit'&&l.habitId===h.id&&l.date===today());
+    const done = entry?.result==='done';
+    return `<div class="today-row${done?' done':''}">
+      <button class="tap-circle green${done?' done':''}" onclick="toggleHabitToday('${h.id}')"
+        aria-label="${done?'Mark not done':'Mark done'}: ${escapeHtml(h.name)}">${done?'✓':''}</button>
+      <div class="today-row-body">
+        <div class="today-row-name" onclick="openHlogModal('${h.id}','${today()}')">${escapeHtml(h.name)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleHabitToday(id){
+  const t = today();
+  const logs = load(STORE_LOG);
+  const entry = logs.find(l=>l.type==='habit'&&l.habitId===id&&l.date===t);
+  if(entry){
+    entry.result = entry.result==='done' ? null : 'done';
+    // if the toggle-off leaves an otherwise-empty entry, drop it to stay tidy
+    if(entry.result===null && !entry.planned && !entry.actual && entry.spoonActual==null && !entry.reflection){
+      const cleaned = logs.filter(l=>l!==entry);
+      save(STORE_LOG, cleaned);
+    } else {
+      save(STORE_LOG, logs);
+    }
+  } else {
+    const h = load(STORE_HABITS).find(x=>x.id===id);
+    logs.unshift({ date:t, type:'habit', habitId:id, name:h?.name, result:'done' });
+    save(STORE_LOG, logs);
+  }
+  renderTodayHabits();
+}
+
+/* ── Tasks: one tap completes; tap again to undo. Detail optional. ── */
+function renderTodayTasks(){
+  const wrap = document.getElementById('today-tasks');
+  const note = document.getElementById('today-tasks-note');
+  if(!wrap) return;
+  const all = load(STORE_TASKS);
+  const t = today();
+  const active = all.filter(x=>x.status==='active');
+  const doneToday = all.filter(x=>x.status==='done' && x.completedAt===t);
+  const shownActive = active.slice(0, TODAY_TASK_LIMIT);
+
+  if(note){
+    if(active.length > TODAY_TASK_LIMIT){
+      note.innerHTML = `${active.length} active · <a href="#" onclick="showView('active');return false;">see all</a>`;
+    } else {
+      note.textContent = active.length ? 'tap the circle when it\u2019s done' : '';
+    }
+  }
+
+  const rowHtml = (x, done) => {
+    const spoons = x.spoonEst ? `<span class="today-row-spoons" title="${x.spoonEst} spoons">`+
+      Array.from({length:x.spoonEst},()=>'<span class="today-chip-spoon"></span>').join('')+`</span>` : '';
+    const stepCount = (x.steps||[]).length;
+    const stepInfo = stepCount ? `<span>${(x.steps||[]).filter(s=>s.done).length}/${stepCount} steps</span>` : '';
+    const sub = (spoons||stepInfo) ? `<div class="today-row-sub">${spoons}${stepInfo}</div>` : '';
+    return `<div class="today-row${done?' done':''}">
+      <button class="tap-circle${done?' done':''}" onclick="toggleTaskToday('${x.id}')"
+        aria-label="${done?'Undo complete':'Complete'}: ${escapeHtml(x.name)}">${done?'✓':''}</button>
+      <div class="today-row-body">
+        <div class="today-row-name" onclick="openTaskModal('${x.id}')">${escapeHtml(x.name)}</div>
+        ${sub}
+      </div>
+    </div>`;
+  };
+
+  let html = shownActive.map(x=>rowHtml(x,false)).join('');
+  html += doneToday.map(x=>rowHtml(x,true)).join('');
+
+  if(!active.length && !doneToday.length){
+    html = `<div class="today-empty">Nothing here yet. Add one small thing above — or pull from your <a href="#" onclick="showView('backlog');return false;">backlog</a> when you have the energy.</div>`;
+  }
+  wrap.innerHTML = html;
+}
+function toggleTaskToday(id){
+  const tasks = load(STORE_TASKS);
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  const tod = today();
+  if(t.status==='done'){
+    // undo — forgiving by design
+    t.status='active'; t.completedAt=null;
+    save(STORE_TASKS, tasks);
+    // remove the log entry we wrote for today, if present
+    const logs = load(STORE_LOG).filter(l=>!(l.type==='task'&&l.name===t.name&&l.date===tod));
+    save(STORE_LOG, logs);
+  } else {
+    t.status='done'; t.completedAt=tod;
+    save(STORE_TASKS, tasks);
+    const logs = load(STORE_LOG);
+    logs.unshift({ date:tod, type:'task', name:t.name,
+      spoonActual:t.spoonActual||null, timeHours:t.timeHours||null, timeMins:t.timeMins||null,
+      transitionDone:t.transitionDone||'', reflection:t.reflection||'' });
+    save(STORE_LOG, logs);
+  }
+  renderTodayTasks();
+}
+
+/* small shared helper — keep user text safe inside innerHTML */
+function escapeHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+
+
+/* ═══════════════════════════════════════
    DATA EXPORT / IMPORT — manual sync
 ═══════════════════════════════════════ */
 const SYNC_KEYS = [STORE_TASKS, STORE_HABITS, STORE_SECTIONS, STORE_LOG, STORE_MOOD, STORE_ACT];
@@ -2216,12 +2673,187 @@ function importData(event){
 }
 
 /* ═══════════════════════════════════════
+   KEYBOARD — small niceties, capture-first
+═══════════════════════════════════════ */
+function setupKeyboard(){
+  document.addEventListener('keydown', e=>{
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName||'');
+    // "/" or "n" jumps to quick capture when on Today and not already typing
+    if(!typing && _currentView==='today' && (e.key==='/'||e.key==='n')){
+      const inp=document.getElementById('today-capture-input');
+      if(inp){ e.preventDefault(); inp.focus(); }
+    }
+    if(e.key==='Escape'){
+      if(typing && document.activeElement) document.activeElement.blur();
+      document.querySelectorAll('.modal-overlay.open').forEach(o=>o.classList.remove('open'));
+    }
+  });
+}
+
+/* ═══════════════════════════════════════
+   GOOGLE DRIVE SYNC (via the Drive desktop folder)
+   No login, no credentials, nothing stored in the
+   site. We hold a File System Access handle to a
+   file the user places in their Drive-synced folder;
+   Drive's own desktop app syncs it to the cloud and
+   their other machine. Falls back to file download
+   /upload where the API isn't available.
+═══════════════════════════════════════ */
+const FSA_SUPPORTED = (typeof window!=='undefined') && ('showSaveFilePicker' in window) && ('showOpenFilePicker' in window);
+let _driveHandle = null;
+
+/* tiny IndexedDB store for the (non-serialisable) file handle */
+function idbHandle(mode, value){
+  return new Promise((resolve,reject)=>{
+    let req;
+    try { req = indexedDB.open('tracker-sync',1); }
+    catch(e){ return resolve(null); }
+    req.onupgradeneeded = ()=>{ req.result.createObjectStore('kv'); };
+    req.onerror = ()=>resolve(null);
+    req.onsuccess = ()=>{
+      const db=req.result;
+      const tx=db.transaction('kv', mode==='get'?'readonly':'readwrite');
+      const store=tx.objectStore('kv');
+      let op;
+      if(mode==='get') op=store.get('driveHandle');
+      else if(mode==='set') op=store.put(value,'driveHandle');
+      else if(mode==='del') op=store.delete('driveHandle');
+      op.onsuccess = ()=>resolve(mode==='get'?op.result:true);
+      op.onerror   = ()=>resolve(null);
+    };
+  });
+}
+
+async function initDriveHandleState(){
+  if(!FSA_SUPPORTED){ reflectDriveButtons(false); return; }
+  try {
+    _driveHandle = await idbHandle('get');
+    reflectDriveButtons(!!_driveHandle);
+  } catch(e){ reflectDriveButtons(false); }
+}
+
+function reflectDriveButtons(linked){
+  const s=document.getElementById('drive-save-btn'), l=document.getElementById('drive-load-btn');
+  if(!s||!l) return;
+  if(!FSA_SUPPORTED){
+    s.textContent='⬇ Save backup file'; l.textContent='⤓ Load backup file';
+    return;
+  }
+  s.textContent = linked ? '☁ Save to Drive' : '☁ Link Drive file…';
+  l.textContent = linked ? '⤓ Load from Drive' : '⤓ Link Drive file…';
+}
+
+async function verifyPermission(handle, write){
+  const opts={ mode: write?'readwrite':'read' };
+  if((await handle.queryPermission(opts))==='granted') return true;
+  if((await handle.requestPermission(opts))==='granted') return true;
+  return false;
+}
+
+async function pickDriveFile(create){
+  const opts={
+    suggestedName: SYNC_FILENAME,
+    types:[{ description:'Tracker data', accept:{'application/json':['.json']} }]
+  };
+  const handle = create ? await window.showSaveFilePicker(opts)
+                        : (await window.showOpenFilePicker({...opts, multiple:false}))[0];
+  _driveHandle = handle;
+  await idbHandle('set', handle);
+  reflectDriveButtons(true);
+  return handle;
+}
+
+async function driveSave(){
+  // Fallback: no File System Access → download a file instead
+  if(!FSA_SUPPORTED){ exportData(); return; }
+  try {
+    if(!_driveHandle){
+      flashSync('Choose where to keep the file…');
+      await pickDriveFile(true);
+    }
+    if(!(await verifyPermission(_driveHandle,true))){ flashSync('Permission needed', true); return; }
+    const payload={ _app:'my-tracker', _version:1, _exportedAt:new Date().toISOString(), data:{} };
+    SYNC_KEYS.forEach(k=>{ payload.data[k]=JSON.parse(localStorage.getItem(k)||'[]'); });
+    const w=await _driveHandle.createWritable();
+    await w.write(JSON.stringify(payload,null,2));
+    await w.close();
+    flashSync('✓ Saved to Drive');
+  } catch(e){
+    if(e && e.name==='AbortError'){ flashSync(''); return; } // user cancelled the picker
+    flashSync('Save failed', true); console.error('driveSave',e);
+  }
+}
+
+async function driveLoad(){
+  if(!FSA_SUPPORTED){ document.getElementById('import-file').click(); return; }
+  try {
+    if(!_driveHandle){
+      flashSync('Choose your sync file…');
+      await pickDriveFile(false);
+    }
+    if(!(await verifyPermission(_driveHandle,false))){ flashSync('Permission needed', true); return; }
+    const file=await _driveHandle.getFile();
+    const text=await file.text();
+    const parsed=JSON.parse(text);
+    const data=parsed.data||parsed;
+    const validKeys=SYNC_KEYS.filter(k=>k in data);
+    if(!validKeys.length){ flashSync('Not a tracker file', true); return; }
+    const stamp=parsed._exportedAt?new Date(parsed._exportedAt).toLocaleString():'unknown date';
+    if(!confirm('Load the backup saved '+stamp+'?\n\nThis replaces the data in this browser.')) { flashSync(''); return; }
+    validKeys.forEach(k=>localStorage.setItem(k, JSON.stringify(data[k])));
+    flashSync('✓ Loaded — reloading');
+    setTimeout(()=>location.reload(), 700);
+  } catch(e){
+    if(e && e.name==='AbortError'){ flashSync(''); return; }
+    flashSync('Load failed', true); console.error('driveLoad',e);
+  }
+}
+
+async function unlinkDrive(){
+  _driveHandle=null;
+  await idbHandle('del');
+  reflectDriveButtons(false);
+  flashSync('Unlinked');
+  renderDriveStatus();
+}
+
+function renderDriveStatus(){
+  const el=document.getElementById('drive-status');
+  if(!el) return;
+  if(!FSA_SUPPORTED){
+    el.className='setup-status';
+    el.textContent='This browser can\u2019t link a file directly. Use Chrome or Edge on desktop, or use the download/upload buttons.';
+    return;
+  }
+  el.className = _driveHandle ? 'setup-status ok' : 'setup-status';
+  el.textContent = _driveHandle ? '✓ A sync file is linked. “Save to Drive” writes straight to it.'
+                                : 'No file linked yet. Pick one below to start.';
+}
+
+async function openDriveSetup(){
+  await initDriveHandleState();
+  renderDriveStatus();
+  const link=document.getElementById('drive-unlink-row');
+  if(link) link.style.display = _driveHandle ? '' : 'none';
+  document.getElementById('drive-modal').classList.add('open');
+}
+async function driveSetupPick(){
+  if(!FSA_SUPPORTED){ document.getElementById('import-file').click(); return; }
+  try { await pickDriveFile(true); renderDriveStatus();
+        const link=document.getElementById('drive-unlink-row'); if(link) link.style.display='';
+        flashSync('✓ Linked'); }
+  catch(e){ if(!(e&&e.name==='AbortError')){ flashSync('Could not link', true);} }
+}
+
+/* ═══════════════════════════════════════
    INIT
 ═══════════════════════════════════════ */
 ensureDefaultSection();
 ensureActivities();
 ['t-spoon-est','h-spoon-est','log-spoon-actual','hlog-spoon-est','hlog-spoon-actual'].forEach(id=>buildSpoonPicker(id,null));
-showView('active');
+initDriveHandleState();
+showView('today');
+setupKeyboard();
 
 /* PWA removed — desktop version */
 
